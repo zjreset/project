@@ -7,19 +7,8 @@
 //
 
 #import "AppDelegate.h"
-#import "LoginViewController.h"
-#import "Reachability.h"
-#import "TabBarController.h"
-#import "MenuController.h"
-#import "MainViewController.h"
-#import "AssetsRecordViewController.h"
-#import "EntityBaseMenuController.h"
-#import "EntityBaseTabBarController.h"
-#import "EntityBaseGridViewController.h"
-#import "AssetsRecordTableViewController.h"
 
 @implementation AppDelegate
-@synthesize SERVER_HOST,JSESSIONID;
 
 - (void)dealloc
 {
@@ -27,8 +16,6 @@
     [_managedObjectContext release];
     [_managedObjectModel release];
     [_persistentStoreCoordinator release];
-    TT_RELEASE_SAFELY(SERVER_HOST);
-    TT_RELEASE_SAFELY(JSESSIONID);
     [super dealloc];
 }
 
@@ -38,83 +25,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    //全局变量远端服务器URL地址
-    SERVER_HOST = @"http://192.168.0.49:8088/runes_dw";
-    
-    //网络检测,
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reachabilityChanged:)
-                                                 name: kReachabilityChangedNotification
-                                               object: nil];
-    hostReach = [[Reachability reachabilityWithHostName:@"www.apple.com"] retain];
-    [hostReach startNotifier];
-    
-    //开始设置首页跳转页面
-    TTNavigator* navigator = [TTNavigator navigator];
-    navigator.persistenceMode = TTNavigatorPersistenceModeAll;
-    self.window = [[[UIWindow alloc] initWithFrame:TTScreenBounds()] autorelease];
+    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
-    navigator.window = self.window;
-    
-    TTURLMap* map = navigator.URLMap;
-    
-    //页面URL集,默认URL
-    [map from:@"*" toViewController:[TTWebController class]];
-    //用户登陆页面
-    [map from:@"tt://login" toSharedViewController:[LoginViewController class]];
-    //主页
-    [map from:@"tt://main" toSharedViewController:[MainViewController class]];
-    //主TAB页
-    [map from:@"tt://tabBar" toSharedViewController:[TabBarController class]];
-    //菜单页
-    [map from:@"tt://menu/(initWithMenu:)" toSharedViewController:[MenuController class]];
-    //资产查询详情
-    [map from:@"tt://assetsRecordTableViewQuery/(initWithURLQuery:)" toViewController:[AssetsRecordTableViewController class]];
-    //主TAB页
-    [map from:@"tt://entityTabBar" toSharedViewController:[EntityBaseTabBarController class]];
-    //菜单页
-    [map from:@"tt://entityMenu/(initWithMenu:)" toSharedViewController:[EntityBaseMenuController class]];
-    //站址详情
-    [map from:@"tt://entityBaseGridQuery?url=(initWithURL:)" toViewController:[EntityBaseGridViewController class]];
-    //菜单页
-    [map from:@"tt://assetsRecordQuery?url=(initWithNavigatorURL:)" toModalViewController:[AssetsRecordViewController class]];
-    //菜单页
-    [map from:@"tt://assetsRecordPage/(initWithPageTag:)" toModalViewController:[AssetsRecordViewController class]];
-    
-    // Before opening the tab bar, we see if the controller history was persisted the last time
-    if (![navigator restoreViewControllers]) {
-        //进入默认登陆页面
-        [navigator openURLAction:[TTURLAction actionWithURLPath:@"tt://login"]];
-    }
-    [self.window setRootViewController:navigator.rootViewController];
+    [self.window makeKeyAndVisible];
     return YES;
-}
-
-- (void)reachabilityChanged:(NSNotification *)note {
-    Reachability* curReach = [note object];
-    NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
-    NetworkStatus status = [curReach currentReachabilityStatus];
-    UIAlertView *alert;
-    switch (status) {
-        case NotReachable:
-            alert = [[UIAlertView alloc] initWithTitle:@""
-                                               message:@"无法连接到网络,请检查网络设置"
-                                              delegate:nil
-                                     cancelButtonTitle:@"确定" otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            break;
-        case ReachableViaWWAN:
-            alert = [[UIAlertView alloc] initWithTitle:@""
-                                               message:@"检测到您没有使用WIFI网络"
-                                              delegate:nil
-                                     cancelButtonTitle:@"确定" otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            break;
-        case ReachableViaWiFi:  //使用WIFI网络
-            break;
-    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
