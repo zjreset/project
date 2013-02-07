@@ -21,5 +21,6 @@ typedef enum {
     UILabel *_titleLabel;
     UITextField *_textField;
 }
+@property (nonatomic, retain) UITextField *textField;
 - (id)initWithFrame:(CGRect)frame title:(NSString*)_title inputType:(NSInteger)_inputType inputValue:(NSString*)_inputValue;
 @end

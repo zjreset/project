@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "AssetsRecord.h"
 #import "SBJson.h"
+#import "TableCustomSubtitleItem.h"
 
 @implementation AssetsSearchDataSource
 
@@ -89,5 +90,13 @@
 {
     tableView.rowHeight = 66;
     return [super tableView:tableView numberOfRowsInSection:section];
+}
+
+- (Class)tableView:(UITableView*)tableView cellClassForObject:(id) object {
+    if ([object isKindOfClass:[TTTableSubtitleItem class]] && ![object isKindOfClass:[TTTableMoreButton class]]) {
+        return [TableCustomSubtitleItem class];
+    } else {
+        return [super tableView:tableView cellClassForObject:object];
+    }
 }
 @end

@@ -9,21 +9,22 @@
 #import "AutoAdaptedView.h"
 
 @implementation AutoAdaptedView
-static int titleLabelWidth = 70;
+@synthesize textField=_textField;
+static int titleLabelWidth = 90;
 
 - (id)initWithFrame:(CGRect)frame title:(NSString*)_title inputType:(NSInteger)_inputType inputValue:(NSString*)_inputValue
 {
-    self = [super initWithFrame:frame];
+    self = [[super initWithFrame:frame] autorelease];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, titleLabelWidth, 30)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, titleLabelWidth, 30)];
         _titleLabel.text = _title;
         _titleLabel.textAlignment = NSTextAlignmentRight;
         _titleLabel.font = [UIFont systemFontOfSize:14];
         [self addSubview:_titleLabel];
         switch (_inputType) {
             case InputTypeInput:    //输入框
-                _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-30, 30)];
+                _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, 30)];
                 _textField.textAlignment = NSTextAlignmentLeft;
                 if (![_inputValue isEqual:[NSNull null]]) {
                     _textField.text = _inputValue;
@@ -31,7 +32,18 @@ static int titleLabelWidth = 70;
                 _textField.backgroundColor = [UIColor grayColor];
                 [self addSubview:_textField];
                 break;
+            case InputTypeSelect:
                 
+                break;
+            case InputTypeCheckbox:
+                
+                break;
+            case InputTypeRadio:
+                
+                break;
+            case InputTypeDate:
+                
+                break;
             default:
                 break;
         }

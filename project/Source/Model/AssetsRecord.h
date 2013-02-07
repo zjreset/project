@@ -38,6 +38,7 @@
 @property (nonatomic, retain) NSString *noteUser;
 @property (nonatomic, retain) NSString *positionName;
 @property (nonatomic, retain) NSString *photoPath;
+@property (nonatomic, retain) NSMutableArray *assetsPropList;
 
 -(NSMutableArray*) initAssetsRecord:(NSDictionary *)jsonDic;
 @end
