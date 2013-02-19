@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "SysTypeValue.h"
+#import "TUser.h"
 #import "LoginViewController.h"
 #import "Reachability.h"
 #import "TabBarController.h"
@@ -19,7 +21,7 @@
 #import "AssetsRecordTableViewController.h"
 
 @implementation AppDelegate
-@synthesize SERVER_HOST,JSESSIONID;
+@synthesize SERVER_HOST,JSESSIONID,sysTypeValueList = _sysTypeValueList,userList = _userList;
 
 - (void)dealloc
 {
@@ -29,6 +31,7 @@
     [_persistentStoreCoordinator release];
     TT_RELEASE_SAFELY(SERVER_HOST);
     TT_RELEASE_SAFELY(JSESSIONID);
+    TT_RELEASE_SAFELY(_sysTypeValueList);
     [super dealloc];
 }
 
@@ -115,6 +118,91 @@
         case ReachableViaWiFi:  //使用WIFI网络
             break;
     }
+}
+
+- (void)setSysTypeValues
+{
+    NSString *server_base = [NSString stringWithFormat:@"%@/admin/systypevalue!findTypeValueAll.action", SERVER_HOST];
+    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+    [request setHttpMethod:@"POST"];
+    
+    request.contentType=@"application/x-www-form-urlencoded";
+    NSString* postBodyString = [NSString stringWithFormat:@"isMobile=true"];
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+    
+    [request setHttpBody:postData];
+    request.userInfo = @"SysTypeValue";
+    [request send];
+    
+    request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
+- (void)setTUser
+{
+    NSString *server_base = [NSString stringWithFormat:@"%@/userInfo/tuser!findUserAll.action", SERVER_HOST];
+    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+    [request setHttpMethod:@"POST"];
+    
+    request.contentType=@"application/x-www-form-urlencoded";
+    NSString* postBodyString = [NSString stringWithFormat:@"isMobile=true"];
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+    
+    [request setHttpBody:postData];
+    request.userInfo = @"TUser";
+    [request send];
+    
+    request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (void)requestDidStartLoad:(TTURLRequest*)request {
+    //加入请求开始的一些进度条
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (void)requestDidFinishLoad:(TTURLRequest*)request {
+    TTURLDataResponse* dataResponse = (TTURLDataResponse*)request.response;
+    NSString *json = [[NSString alloc] initWithData:dataResponse.data encoding:NSUTF8StringEncoding];
+    //NSLog(@"%@",json);
+    SBJsonParser * jsonParser = [[SBJsonParser alloc] init];
+    NSDictionary *jsonDic = [jsonParser objectWithString:json];
+    [jsonParser release];
+	[json release];
+	request.response = nil;
+    bool success = [[jsonDic objectForKey:@"success"] boolValue];
+    if (!success) {
+        //创建对话框 提示用户获取请求数据失败
+        UIAlertView * alert= [[UIAlertView alloc] initWithTitle:[jsonDic objectForKey:@"msg"] message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        [alert release];
+    }
+    else{
+        static NSStringCompareOptions comparisonOptions = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
+        if (request.userInfo != nil && [request.userInfo compare:@"SysTypeValue" options:comparisonOptions] == NSOrderedSame) {
+            SysTypeValue *sysTypeValue = [[SysTypeValue alloc] init];
+            _sysTypeValueList = [sysTypeValue initSysTypeValue:[jsonDic objectForKey:@"sysTypeValueList"]];
+            TT_RELEASE_SAFELY(sysTypeValue);
+        }
+        else if (request.userInfo != nil && [request.userInfo compare:@"TUser" options:comparisonOptions] == NSOrderedSame) {
+            TUser *tUser = [[TUser alloc] init];
+            _userList = [tUser initTUser:[jsonDic objectForKey:@"userList"]];
+            TT_RELEASE_SAFELY(tUser);
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (void)request:(TTURLRequest*)request didFailLoadWithError:(NSError*)error {
+    //[loginButton setTitle:@"Failed to load, try again." forState:UIControlStateNormal];
+    UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"获取http请求失败!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    //将这个UIAlerView 显示出来
+    [alert show];
+    //释放
+    [alert release];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

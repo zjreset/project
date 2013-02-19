@@ -40,6 +40,8 @@
 		845A4D6716B37210007B537B /* desktop-more1.png in Resources */ = {isa = PBXBuildFile; fileRef = 845A4D6016B37210007B537B /* desktop-more1.png */; };
 		845A4D6816B37210007B537B /* desktop-more2.png in Resources */ = {isa = PBXBuildFile; fileRef = 845A4D6116B37210007B537B /* desktop-more2.png */; };
 		845A4D6916B37210007B537B /* desktop-task.png in Resources */ = {isa = PBXBuildFile; fileRef = 845A4D6216B37210007B537B /* desktop-task.png */; };
+		846C8C6D16D07A9C00C2FC85 /* SysTypeValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 846C8C6C16D07A9C00C2FC85 /* SysTypeValue.m */; };
+		84726C7016D3198800B56E1A /* TUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84726C6F16D3198800B56E1A /* TUser.m */; };
 		847AE06116A7D205001D37D3 /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 847AE02416A7D205001D37D3 /* NSObject+SBJson.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		847AE06216A7D205001D37D3 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 847AE02716A7D205001D37D3 /* SBJsonParser.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		847AE06316A7D205001D37D3 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 847AE02916A7D205001D37D3 /* SBJsonStreamParser.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -406,6 +408,10 @@
 		845A4D6016B37210007B537B /* desktop-more1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "desktop-more1.png"; sourceTree = "<group>"; };
 		845A4D6116B37210007B537B /* desktop-more2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "desktop-more2.png"; sourceTree = "<group>"; };
 		845A4D6216B37210007B537B /* desktop-task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "desktop-task.png"; sourceTree = "<group>"; };
+		846C8C6B16D07A9C00C2FC85 /* SysTypeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SysTypeValue.h; sourceTree = "<group>"; };
+		846C8C6C16D07A9C00C2FC85 /* SysTypeValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SysTypeValue.m; sourceTree = "<group>"; };
+		84726C6E16D3198800B56E1A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUser.h; sourceTree = "<group>"; };
+		84726C6F16D3198800B56E1A /* TUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TUser.m; sourceTree = "<group>"; };
 		847AE02316A7D205001D37D3 /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
 		847AE02416A7D205001D37D3 /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJson.m"; sourceTree = "<group>"; };
 		847AE02516A7D205001D37D3 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJson.h; sourceTree = "<group>"; };
@@ -639,6 +645,10 @@
 				840B693A16BB7511006670C3 /* AssetsTypeTop.m */,
 				842B479E16C23BC900790A31 /* AssetsProp.h */,
 				842B479F16C23BC900790A31 /* AssetsProp.m */,
+				846C8C6B16D07A9C00C2FC85 /* SysTypeValue.h */,
+				846C8C6C16D07A9C00C2FC85 /* SysTypeValue.m */,
+				84726C6E16D3198800B56E1A /* TUser.h */,
+				84726C6F16D3198800B56E1A /* TUser.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1444,6 +1454,8 @@
 				841C56FB16BF597D0003E83F /* DecoderViewController.m in Sources */,
 				840B439A16C10AFA009397A8 /* TableCustomSubtitleItem.m in Sources */,
 				842B47A016C23BC900790A31 /* AssetsProp.m in Sources */,
+				846C8C6D16D07A9C00C2FC85 /* SysTypeValue.m in Sources */,
+				84726C7016D3198800B56E1A /* TUser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

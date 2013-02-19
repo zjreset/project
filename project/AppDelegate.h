@@ -13,6 +13,8 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 {
     Reachability  *hostReach;   //对手机网络状况的检测
+    NSMutableArray *_sysTypeValueList;
+    NSMutableArray *_userList;
 }
 @property (strong, nonatomic) UIWindow *window;
 
@@ -21,7 +23,10 @@
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (nonatomic,retain) NSString *SERVER_HOST;
 @property (nonatomic,retain) NSString *JSESSIONID;
+@property (nonatomic,retain) NSMutableArray *sysTypeValueList;
+@property (nonatomic,retain) NSMutableArray *userList;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
-
+- (void)setSysTypeValues;
+- (void)setTUser;
 @end

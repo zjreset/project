@@ -19,24 +19,37 @@ typedef enum {
     PageAssetsDrop,
 } PageTag;
 
-@interface AssetsRecordViewController : TTViewController<UIAlertViewDelegate>
+typedef enum {
+    FieldTagNone,
+    TypeCodeFieldTag,
+    UserFieldTag,
+    TypeValueFieldTag
+}FieldTag;
+
+@interface AssetsRecordViewController : TTViewController<UIAlertViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
 {
     AssetsRecord *_assetsRecord;
     NSInteger _pageTag;
+    NSInteger _editTag;
     TTButton *_rukuButton;
-    AutoAdaptedView *_zichanName;
-    AutoAdaptedView *_zichanFactory;
-    AutoAdaptedView *_typeName;
-    AutoAdaptedView *_assetsCode;
-    AutoAdaptedView *_barcode;
-    AutoAdaptedView *_assetsOwners;
-    AutoAdaptedView *_startTimeStr;
-    AutoAdaptedView *_valid;
-    AutoAdaptedView *_status;
-    AutoAdaptedView *_remark;
-    AutoAdaptedView *_zichanLng;
-    AutoAdaptedView *_zichanLat;
-    AutoAdaptedView *_resp;
-    AutoAdaptedView *_fujia;
+    AutoAdaptedView *_zichanName;           //资产名称
+    AutoAdaptedView *_zichanTypeCode;       //资产类型
+    AutoAdaptedView *_zichanFactory;        //厂家
+    AutoAdaptedView *_typeName;             //型号
+    AutoAdaptedView *_assetsCode;           //资产编号
+    AutoAdaptedView *_barcode;              //资产条码
+    AutoAdaptedView *_assetsOwners;         //资产所有者
+    AutoAdaptedView *_startTimeStr;         //使用时间
+    AutoAdaptedView *_valid;                //报废年限
+    AutoAdaptedView *_status;               //性能状态
+    AutoAdaptedView *_remark;               //备注
+    AutoAdaptedView *_zichanLng;            //经度
+    AutoAdaptedView *_zichanLat;            //纬度
+    AutoAdaptedView *_resp;                 //责任人
+    AutoAdaptedView *_fujia;                //附加字段,根据资产类型生成不同字段
+    AutoAdaptedView *_autoAdaptedView;      //临时中间字段,作为区分操作字段
 }
+@property (nonatomic,retain) UITableView *alertTableView;
+@property (nonatomic,retain) UIAlertView *dataAlertView;
+@property (nonatomic,retain) NSMutableArray *alertListContent;
 @end

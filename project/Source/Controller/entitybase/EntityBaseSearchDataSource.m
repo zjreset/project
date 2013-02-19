@@ -41,7 +41,7 @@
             //TTTableImageItem *item = [TTTableImageItem itemWithText: assetsRecord.name imageURL:assetsRecord.photoPath];
             TTTableSubtitleItem *item = [TTTableSubtitleItem itemWithText:entityBase.baseName
                                                                  subtitle:entityBase.statusName
-                                                                 imageURL:@""
+                                                                 imageURL:nil
                                                                  defaultImage:defaultPerson
                                                                  URL:nil accessoryURL:nil];
             
@@ -49,13 +49,13 @@
             [items addObject: item];
             //TT_RELEASE_SAFELY(item);
         }
-        //判断是否有页厂倍数的余数,如果有则加载TableMoreButton;
+        //判断是否有页长倍数的余数,如果有则加载TableMoreButton;
         if(!([items count]%10) && [items count]){
             [items addObject:[TTTableMoreButton itemWithText:@"加载更多..."]];
         }
     }
     else{
-        TTTableImageItem *item = [TTTableImageItem itemWithText: @"没有查询到该记录" imageURL:@""];
+        TTTableImageItem *item = [TTTableImageItem itemWithText: @"没有查询到该记录" imageURL:nil];
         item.userInfo = nil;
         [items addObject: item];
         //TT_RELEASE_SAFELY(item);
@@ -87,7 +87,7 @@
 #pragma mark - Table view data source
 - (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    tableView.rowHeight = 66;
+    //tableView.rowHeight = 66;
     return [super tableView:tableView numberOfRowsInSection:section];
 }
 @end

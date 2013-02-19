@@ -11,15 +11,19 @@
 #import "AssetsProp.h"
 #import "AppDelegate.h"
 #import "SBJson.h"
+#import "SysTypeValue.h"
+#import "TUser.h"
 
 @interface AssetsRecordViewController ()
 
 @end
 static int LOGINTAG = -1;       //需要退回到登陆状态的TAG标志
 static int INPUTHEIGHT = 30;
+static int TEXTAREAHEIGHT = 130;
 static int _X = 10;
 static int _P = 10;
 @implementation AssetsRecordViewController
+@synthesize alertTableView,dataAlertView,alertListContent;
 
 - (id)initWithNavigatorURL:(NSURL *)URL query:(NSDictionary *)query
 {
@@ -61,14 +65,20 @@ static int _P = 10;
             NSLog(@"edit");
             break;
     }
-    if (_assetsRecord.useStatus != 0) {
-        //开启下方工具栏
-        [self.navigationController setToolbarHidden:NO];
-        NSMutableArray *toolbarArray = [[[NSMutableArray alloc] init] autorelease];
-        if (!_assetsRecord) {
-            _assetsRecord = [[AssetsRecord alloc] init];
-        }
-        else {
+    alertTableView = [[UITableView alloc] initWithFrame: CGRectMake(15, 50, 255, 225)];
+    alertTableView.delegate = self;
+    alertTableView.dataSource = self;
+    
+    //开启下方工具栏
+    [self.navigationController setToolbarHidden:NO];
+    NSMutableArray *toolbarArray = [[[NSMutableArray alloc] init] autorelease];
+    _editTag = 1;
+    if (!_assetsRecord) {
+        _editTag = 0;
+        _assetsRecord = [[AssetsRecord alloc] init];
+    }
+    else {
+        if (_assetsRecord.useStatus) {
             NSString *outTitle = @"出库";
             UIBarButtonItem *changeButton;
             int position = 0;
@@ -98,8 +108,8 @@ static int _P = 10;
                                                                              action:@selector(dropStore)] autorelease];
             [toolbarArray addObject:deleteButton];
         }
-        self.toolbarItems = toolbarArray;
     }
+    self.toolbarItems = toolbarArray;
     
     self.navigationItem.leftBarButtonItem =
     [[[UIBarButtonItem alloc] initWithTitle:@"关闭" style:UIBarButtonItemStyleBordered
@@ -118,51 +128,75 @@ static int _P = 10;
     int y = 0;
     
     self.title = @"资产详细信息";
-	_zichanName = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, _P, self.view.frame.size.width, INPUTHEIGHT) title:@"资产名称:" inputType:1 inputValue:_assetsRecord.name];
+	_zichanName = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, _P, self.view.frame.size.width, INPUTHEIGHT) title:@"资产名称:" inputType:@"input" inputText:_assetsRecord.name inputValue:_assetsRecord.name valueTypeDicCode:nil];
+    _zichanName.textField.delegate = self;
     [scrollView addSubview:_zichanName];
     y = y + _zichanName.frame.size.height + 2*_P;
     
-	_zichanFactory = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"厂家:" inputType:1 inputValue:_assetsRecord.factory];
+	_zichanTypeCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产类型:" inputType:@"select" inputText:_assetsRecord.typeName inputValue:_assetsRecord.typeCode valueTypeDicCode:nil];
+    _zichanTypeCode.textField.delegate = self;
+    if (_editTag) {
+        _zichanTypeCode.textField.enabled = false;
+    }
+    _zichanTypeCode.textField.tag = TypeCodeFieldTag;
+    [scrollView addSubview:_zichanTypeCode];
+    y = y + _zichanTypeCode.frame.size.height + 2*_P;
+    
+	_zichanFactory = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"厂家:" inputType:@"input" inputText:_assetsRecord.factory inputValue:_assetsRecord.factory valueTypeDicCode:nil];
+    _zichanFactory.textField.delegate = self;
+    _zichanFactory.textField.enabled = false;
     [scrollView addSubview:_zichanFactory];
     y = y + _zichanFactory.frame.size.height + 2*_P;
     
-	_typeName = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"型号:" inputType:1 inputValue:_assetsRecord.typeName];
+	_typeName = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"型号:" inputType:@"input" inputText:_assetsRecord.typeName inputValue:_assetsRecord.typeName valueTypeDicCode:nil];
+    _typeName.textField.delegate = self;
+    _typeName.textField.enabled = false;
     [scrollView addSubview:_typeName];
     y = y + _typeName.frame.size.height + 2*_P;
     
-	_assetsCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产编码:" inputType:1 inputValue:_assetsRecord.assetsCode];
+	_assetsCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产编码:" inputType:@"input" inputText:_assetsRecord.assetsCode inputValue:_assetsRecord.assetsCode valueTypeDicCode:nil];
+    _assetsCode.textField.delegate = self;
     [scrollView addSubview:_assetsCode];
     y = y + _assetsCode.frame.size.height + 2*_P;
     
-	_barcode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产条码:" inputType:1 inputValue:_assetsRecord.barcode];
+	_barcode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产条码:" inputType:@"input" inputText:_assetsRecord.barcode inputValue:_assetsRecord.barcode valueTypeDicCode:nil];
+    _barcode.textField.delegate = self;
     [scrollView addSubview:_barcode];
     y = y + _barcode.frame.size.height + 2*_P;
     
-	_assetsOwners = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产所有权:" inputType:1 inputValue:_assetsRecord.assetsOwners];
+	_assetsOwners = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产所有权:" inputType:@"select" inputText:[self getTypeValueNameById:_assetsRecord.assetsOwners] inputValue:_assetsRecord.assetsOwners valueTypeDicCode:@"2"];
+    _assetsOwners.textField.delegate = self;
     [scrollView addSubview:_assetsOwners];
     y = y + _assetsOwners.frame.size.height + 2*_P;
     
-	_startTimeStr = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"使用时间:" inputType:1 inputValue:_assetsRecord.startTimeStr];
+	_startTimeStr = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"使用时间:" inputType:@"date" inputText:_assetsRecord.startTimeStr inputValue:_assetsRecord.startTimeStr valueTypeDicCode:nil];
+    _startTimeStr.textField.delegate = self;
     [scrollView addSubview:_startTimeStr];
     y = y + _startTimeStr.frame.size.height + 2*_P;
     
-	_valid = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"报废年限:" inputType:1 inputValue:[NSString stringWithFormat:@"%f",_assetsRecord.valid]];
+	_valid = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"报废年限:" inputType:@"input" inputText:[NSString stringWithFormat:@"%f",_assetsRecord.valid] inputValue:[NSString stringWithFormat:@"%f",_assetsRecord.valid] valueTypeDicCode:nil];
+    _valid.textField.delegate = self;
     [scrollView addSubview:_valid];
     y = y + _valid.frame.size.height + 2*_P;
     
-	_status = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"性能状态:" inputType:1 inputValue:_assetsRecord.status];
+	_status = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"性能状态:" inputType:@"select" inputText:[self getTypeValueNameById:_assetsRecord.status] inputValue:_assetsRecord.status valueTypeDicCode:@"3"];
+    _status.textField.delegate = self;
     [scrollView addSubview:_status];
     y = y + _status.frame.size.height + 2*_P;
     
-	_zichanLng = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"经度:" inputType:1 inputValue:[NSString stringWithFormat:@"%f",_assetsRecord.lng]];
+	_zichanLng = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"经度:" inputType:@"input" inputText:[NSString stringWithFormat:@"%f",_assetsRecord.lng] inputValue:[NSString stringWithFormat:@"%f",_assetsRecord.lng] valueTypeDicCode:nil];
+    _zichanLng.textField.delegate = self;
     [scrollView addSubview:_zichanLng];
     y = y + _zichanLng.frame.size.height + 2*_P;
     
-	_zichanLat = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"纬度:" inputType:1 inputValue:[NSString stringWithFormat:@"%f",_assetsRecord.lat]];
+	_zichanLat = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"纬度:" inputType:@"input" inputText:[NSString stringWithFormat:@"%f",_assetsRecord.lat] inputValue:[NSString stringWithFormat:@"%f",_assetsRecord.lat] valueTypeDicCode:nil];
+    _zichanLat.textField.delegate = self;
     [scrollView addSubview:_zichanLat];
     y = y + _zichanLat.frame.size.height + 2*_P;
     
-	_resp = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"责任人:" inputType:1 inputValue:_assetsRecord.resp];
+	_resp = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"责任人:" inputType:@"select" inputText:[self getUserNameById:_assetsRecord.resp] inputValue:_assetsRecord.resp valueTypeDicCode:nil];
+    _resp.textField.delegate = self;
+    _resp.textField.tag = UserFieldTag;
     [scrollView addSubview:_resp];
     y = y + _resp.frame.size.height + 2*_P;
     
@@ -170,18 +204,58 @@ static int _P = 10;
     int i = 100;
     for (AssetsProp *assetsProp in _assetsRecord.assetsPropList){
         i++;
-        _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:1 inputValue:assetsProp.value];
+        if (![assetsProp.showStyle isEqual:[NSNull null]] && [assetsProp.showStyle compare:@"textarea"] == NSOrderedSame) {
+            _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, TEXTAREAHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:assetsProp.value inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
+        }
+        else if (![assetsProp.showStyle isEqual:[NSNull null]] && [assetsProp.showStyle compare:@"select"] == NSOrderedSame) {
+            _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:[self getTypeValueNameById:assetsProp.value] inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
+            _fujia.textValue = assetsProp.value;
+        }
+        else{
+            _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:assetsProp.value inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
+        }
         _fujia.tag = i;
+        _fujia.textField.delegate = self;
         [scrollView addSubview:_fujia];
         y = y + _fujia.frame.size.height + 2*_P;
     }
     
-	_remark = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"备注:" inputType:1 inputValue:[NSString stringWithFormat:@"%@",_assetsRecord.remark]];
+    _remark = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"备注:" inputType:@"input" inputText:_assetsRecord.remark inputValue:_assetsRecord.remark valueTypeDicCode:nil];
+    _remark.textField.delegate = self;
     [scrollView addSubview:_remark];
     y = y + _remark.frame.size.height + 2*_P;
     
     scrollView.contentSize = CGSizeMake(self.view.frame.size.width, y);
+    
+    UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
+    [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
+    //self.view = _back;
+    [scrollView addSubview:_back];
+    _back.frame = CGRectMake(0, 0, self.view.frame.size.width, y);
+    [_back release];
+    
+    [scrollView bringSubviewToFront:_zichanName];
+    [scrollView bringSubviewToFront:_zichanFactory];
+    [scrollView bringSubviewToFront:_typeName];
+    [scrollView bringSubviewToFront:_assetsCode];
+    [scrollView bringSubviewToFront:_barcode];
+    [scrollView bringSubviewToFront:_assetsOwners];
+    [scrollView bringSubviewToFront:_startTimeStr];
+    [scrollView bringSubviewToFront:_valid];
+    [scrollView bringSubviewToFront:_status];
+    [scrollView bringSubviewToFront:_zichanLng];
+    [scrollView bringSubviewToFront:_zichanLat];
+    [scrollView bringSubviewToFront:_fujia];
+    [scrollView bringSubviewToFront:_resp];
+    [scrollView bringSubviewToFront:_remark];
+    
     self.view = scrollView;
+    
+    dataAlertView = [[UIAlertView alloc] initWithTitle: @"请选择"
+                                               message: @"\n\n\n\n\n\n\n\n\n\n\n"
+                                              delegate: nil
+                                     cancelButtonTitle: @"取消"
+                                     otherButtonTitles: nil];
 }
 
 //保存资产编辑信息
@@ -202,7 +276,7 @@ static int _P = 10;
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",barcode:'%@'",_barcode.textField.text];
     }
     if (![_assetsOwners.textField.text isEqual:[NSNull null]]) {
-        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsOwners:'%@'",_assetsOwners.textField.text];
+        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsOwners:'%@'",_assetsOwners.textValue];
     }
     if (![_startTimeStr.textField.text isEqual:[NSNull null]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",startTimeStr:'%@'",_startTimeStr.textField.text];
@@ -211,7 +285,7 @@ static int _P = 10;
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",valid:'%@'",_valid.textField.text];
     }
     if (![_status.textField.text isEqual:[NSNull null]]) {
-        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",status:'%@'",_status.textField.text];
+        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",status:'%@'",_status.textValue];
     }
     if (![_zichanLng.textField.text isEqual:[NSNull null]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",lng:'%@'",_zichanLng.textField.text];
@@ -222,6 +296,9 @@ static int _P = 10;
     if (![_remark.textField.text isEqual:[NSNull null]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",remark:'%@'",_remark.textField.text];
     }
+    if (![_resp.textField.text isEqual:[NSNull null]]) {
+        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",resp:'%@'",_resp.textValue];
+    }
     if (_assetsRecord.assetsId) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsId:%i",_assetsRecord.assetsId];
     }
@@ -231,7 +308,12 @@ static int _P = 10;
         i++;
         AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:i];
         if (![aav.textField.text isEqual:[NSNull null]]) {
-            propStr = [propStr stringByAppendingFormat:@",%@:'%@'",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"],aav.textField.text];
+            if ([aav.inputType isEqual:[NSNull null]] && ([aav.inputType compare:@"select"] == NSOrderedSame || [aav.inputType compare:@"radio"] == NSOrderedSame)) {
+                propStr = [propStr stringByAppendingFormat:@",%@:'%@'",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"],aav.textValue];
+            }
+            else{
+                propStr = [propStr stringByAppendingFormat:@",%@:'%@'",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"],aav.textField.text];
+            }
         }
     }
     assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsRecordProp:{assetsId:%i%@}",_assetsRecord.assetsId,propStr];
@@ -249,6 +331,32 @@ static int _P = 10;
     [request send];
     
     request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
+- (NSString*)getTypeValueNameById:(NSString*)sId
+{
+    if (![sId isEqual:[NSNull null]]) {
+        AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+        for(SysTypeValue *sysTypeValue in delegate.sysTypeValueList){
+            if (sysTypeValue != nil && [sysTypeValue.sId compare: sId] == NSOrderedSame) {
+                return sysTypeValue.name;
+            }
+        }
+    }
+    return nil;
+}
+
+- (NSString*)getUserNameById:(NSString*)userId
+{
+    if (![userId isEqual:[NSNull null]]) {
+        AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+        for(TUser *tUser in delegate.userList){
+            if (tUser != nil && tUser.userId == userId.intValue) {
+                return tUser.realName;
+            }
+        }
+    }
+    return nil;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,23 +462,13 @@ static int _P = 10;
 - (void)dealloc
 {
     [super dealloc];
+    TT_RELEASE_SAFELY(dataAlertView);
+    TT_RELEASE_SAFELY(alertTableView);
+    TT_RELEASE_SAFELY(alertListContent);
     //TT_RELEASE_SAFELY(_assetsRecord);
     //TT_RELEASE_SAFELY(_rukuButton);
-//    TT_RELEASE_SAFELY(_zichanName);
-//    TT_RELEASE_SAFELY(_zichanFactory);
-//    TT_RELEASE_SAFELY(_typeName);
-//    TT_RELEASE_SAFELY(_assetsCode);
-//    TT_RELEASE_SAFELY(_barcode);
-//    TT_RELEASE_SAFELY(_assetsOwners);
-//    TT_RELEASE_SAFELY(_startTimeStr);
-//    TT_RELEASE_SAFELY(_valid);
-//    TT_RELEASE_SAFELY(_status);
-//    TT_RELEASE_SAFELY(_useStatus);
-//    TT_RELEASE_SAFELY(_zichanLng);
-//    TT_RELEASE_SAFELY(_zichanLat);
-//    TT_RELEASE_SAFELY(_resp);
-//    TT_RELEASE_SAFELY(_fujia);
 }
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -378,4 +476,197 @@ static int _P = 10;
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark -
+#pragma mark 解决虚拟键盘挡住UITextField的方法
+- (void)keyboardWillShow:(NSNotification *)noti
+{
+    //键盘输入的界面调整
+    //键盘的高度
+    float height = 216.0;
+    CGRect frame = self.view.frame;
+    frame.size = CGSizeMake(frame.size.width, frame.size.height - height);
+    [UIView beginAnimations:@"Curl"context:nil];//动画开始
+    [UIView setAnimationDuration:0.30];
+    [UIView setAnimationDelegate:self];
+    [self.view setFrame:frame];
+    [UIView commitAnimations];
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    // When the user presses return, take focus away from the text field so that the keyboard is dismissed.
+    NSTimeInterval animationDuration = 0.30f;
+    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+    [UIView setAnimationDuration:animationDuration];
+    CGRect rect = CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height);
+    self.view.frame = rect;
+    [UIView commitAnimations];
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    _autoAdaptedView = (AutoAdaptedView*)textField.superview;
+    if (![_autoAdaptedView.inputType isEqual:[NSNull null]] && [_autoAdaptedView.inputType compare:@"select"] == NSOrderedSame) {
+        [self dropdown:textField];
+        [textField resignFirstResponder];
+    }
+    else if (![_autoAdaptedView.inputType isEqual:[NSNull null]] && [_autoAdaptedView.inputType compare:@"date"] == NSOrderedSame) {
+        CGRect frame = textField.superview.frame;
+        int offset = frame.origin.y- (textField.superview.superview.frame.size.height - 216.0)+30-textField.superview.superview.bounds.origin.y;//键盘高度216+header30-滚动偏移
+        NSTimeInterval animationDuration = 0.30f;
+        [UIView beginAnimations:@"ResizeForKeyBoard" context:nil];
+        [UIView setAnimationDuration:animationDuration];
+        float width = self.view.frame.size.width;
+        float height = self.view.frame.size.height;
+        if(offset > 0)
+        {
+            CGRect rect = CGRectMake(0.0f, -offset,width,height);
+            self.view.frame = rect;
+        }
+        [UIView commitAnimations];
+    }
+    else if (![_autoAdaptedView.inputType isEqual:[NSNull null]] && [_autoAdaptedView.inputType compare:@"radio"] == NSOrderedSame) {
+        [textField resignFirstResponder];
+    }
+    else{
+        CGRect frame = textField.superview.frame;
+        int offset = frame.origin.y- (textField.superview.superview.frame.size.height - 216.0)+30-textField.superview.superview.bounds.origin.y;//键盘高度216+header30-滚动偏移
+        NSTimeInterval animationDuration = 0.30f;
+        [UIView beginAnimations:@"ResizeForKeyBoard" context:nil];
+        [UIView setAnimationDuration:animationDuration];
+        float width = self.view.frame.size.width;
+        float height = self.view.frame.size.height;
+        if(offset > 0)
+        {
+            CGRect rect = CGRectMake(0.0f, -offset,width,height);
+            self.view.frame = rect;
+        }
+        [UIView commitAnimations];
+    }
+}
+
+//下拉列表
+- (void)dropdown:(id)sender
+{
+    UITextField *textField = (UITextField*)sender;
+    if (textField.tag == UserFieldTag) {
+        alertListContent = [self getSelectUserList];
+    }
+    else{
+        alertListContent = [self getSelectList:_autoAdaptedView.valueTypeDicCode];
+    }
+    [alertTableView reloadData];
+    [dataAlertView addSubview: alertTableView];
+    [dataAlertView show];
+}
+
+- (NSMutableArray*)getSelectUserList
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSMutableArray* resultList = [[NSMutableArray alloc] initWithArray:delegate.userList];
+    return resultList;
+}
+
+- (NSMutableArray*)getSelectList:(NSString*)typeId
+{
+    NSInteger tid = 0;
+    if (![typeId isEqual:[NSNull null]]) {
+        tid = typeId.intValue;
+    }
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSMutableArray* resultList = [[NSMutableArray alloc] init];
+    for(SysTypeValue *sysTypeValue in delegate.sysTypeValueList){
+        if (sysTypeValue != nil && sysTypeValue.typeId == tid) {
+            [resultList addObject:sysTypeValue];
+        }
+    }
+    return resultList;
+}
+
+#pragma mark -
+
+#pragma mark -
+#pragma mark 触摸背景来关闭虚拟键盘
+-(IBAction)backgroundTap:(id)sender
+{
+    // When the user presses return, take focus away from the text field so that the keyboard is dismissed.
+    NSTimeInterval animationDuration = 0.30f;
+    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+    [UIView setAnimationDuration:animationDuration];
+    CGRect rect = CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height);
+    self.view.frame = rect;
+    [UIView commitAnimations];
+    
+    [_zichanName.textField resignFirstResponder];
+    [_zichanFactory.textField resignFirstResponder];
+    [_typeName.textField resignFirstResponder];
+    [_assetsCode.textField resignFirstResponder];
+    [_barcode.textField resignFirstResponder];
+    //[_assetsOwners.textField resignFirstResponder];
+    [_startTimeStr.textField resignFirstResponder];
+    [_valid.textField resignFirstResponder];
+    [_status.textField resignFirstResponder];
+    [_zichanLng.textField resignFirstResponder];
+    [_zichanLat.textField resignFirstResponder];
+    [_fujia.textField resignFirstResponder];
+    [_resp.textField resignFirstResponder];
+    [_remark.textField resignFirstResponder];
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [alertListContent count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    if (_autoAdaptedView.textField.tag == UserFieldTag) {
+        TUser *tuser;
+        tuser = [alertListContent objectAtIndex:indexPath.row];
+        cell.textLabel.text = tuser.realName;
+    }
+    else{
+        SysTypeValue *stv;
+        stv = [alertListContent objectAtIndex:indexPath.row];
+        cell.textLabel.text = stv.name;
+    }
+    return cell;
+}
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //给下拉框赋值
+    if (_autoAdaptedView.textField.tag == UserFieldTag) {
+        TUser *tuser;
+        tuser = [alertListContent objectAtIndex:indexPath.row];
+        _autoAdaptedView.textValue = [NSString stringWithFormat:@"%i",tuser.userId];
+        _autoAdaptedView.textField.text = tuser.realName;
+    }
+    else{
+        SysTypeValue *stv;
+        stv = [alertListContent objectAtIndex:indexPath.row];
+        _autoAdaptedView.textValue = stv.sId;
+        _autoAdaptedView.textField.text = stv.name;
+    }
+    NSUInteger cancelButtonIndex = dataAlertView.cancelButtonIndex;
+    [dataAlertView dismissWithClickedButtonIndex: cancelButtonIndex animated: YES];
+}
 @end

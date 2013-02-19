@@ -353,6 +353,11 @@
     else{
         NSString *jsessionid = [jsonDic objectForKey:@"jsessionid"];
         ((AppDelegate*)[[UIApplication sharedApplication] delegate]).JSESSIONID = [NSString stringWithFormat:@"jsessionid=%@",jsessionid];
+        AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+        //设置数据字典全局变量
+        [delegate setSysTypeValues];
+        //获取所有用户信息
+        [delegate setTUser];
         [self LoginSuccess];
     }
 }
