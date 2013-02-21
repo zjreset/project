@@ -11,15 +11,16 @@
 #import "SysTypeValue.h"
 
 @implementation AutoAdaptedView
-@synthesize textField = _textField,valueTypeDicCode = _valueTypeDicCode,inputType = _inputType,textValue = _textValue;
+@synthesize textField = _textField,valueTypeDicCode = _valueTypeDicCode,inputType = _inputType,textValue = _textValue,viewHeight;
 static int titleLabelWidth = 90;
 
 - (id)initWithFrame:(CGRect)frame title:(NSString*)_title inputType:(NSString*)sInputType inputText:(NSString*)_inputText inputValue:(NSString*)_inputValue valueTypeDicCode:(NSString*)sValueTypeDicCode
 {
+    viewHeight = 30;
     self = [[super initWithFrame:frame] autorelease];
     if (self) {
         self.backgroundColor = [UIColor whiteColor];
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, titleLabelWidth, 30)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, titleLabelWidth, viewHeight)];
         _titleLabel.text = _title;
         _titleLabel.textAlignment = NSTextAlignmentRight;
         _titleLabel.font = [UIFont systemFontOfSize:14];
@@ -28,7 +29,7 @@ static int titleLabelWidth = 90;
         _valueTypeDicCode = sValueTypeDicCode;
         _inputType = sInputType;
         if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"select"] == NSOrderedSame) {
-            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, 30)];
+            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
             if (![_inputText isEqual:[NSNull null]]) {
                 _textField.text = _inputText;
@@ -37,10 +38,27 @@ static int titleLabelWidth = 90;
             [self addSubview:_textField];
         }
         else if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"radio"] == NSOrderedSame) {
-            
+            NSMutableArray *typeValueList = [self getSelectList:sValueTypeDicCode];
+            int i=0,radioheight = 25;
+            for (SysTypeValue *sysTypeValue in typeValueList){
+                viewHeight = viewHeight + radioheight*i;
+                _radioButton = [[RadioButton alloc] initWithGroupId:_title index:i value:sysTypeValue.sId];
+                _radioButton.frame = CGRectMake(titleLabelWidth+10,i*radioheight+8*(1+i),22,viewHeight);
+                [self addSubview:_radioButton];
+                _radioLabel = [[UILabel alloc] initWithFrame:CGRectMake(titleLabelWidth+10+25, i*radioheight, frame.size.width-titleLabelWidth-35-25, viewHeight)];
+                _radioLabel.text = sysTypeValue.name;
+                [self addSubview:_radioLabel];
+                if ([sysTypeValue.sId compare:_inputValue] == NSOrderedSame) {
+                    NSLog(@"选择%@",_inputValue);
+                    [_radioButton setRadioSelected:YES];
+                }
+                i++;
+            }
+            [RadioButton addObserverForGroupId:_title observer:self];
         }
         else if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"textarea"] == NSOrderedSame) {
-            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, 130)];
+            viewHeight = 130;
+            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
             if (![_inputText isEqual:[NSNull null]]) {
                 _textField.text = _inputText;
@@ -49,7 +67,7 @@ static int titleLabelWidth = 90;
             [self addSubview:_textField];
         }
         else if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"date"] == NSOrderedSame) {
-            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, 30)];
+            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
             if (![_inputText isEqual:[NSNull null]]) {
                 _textField.text = _inputText;
@@ -71,7 +89,7 @@ static int titleLabelWidth = 90;
             [self addSubview:_textField];
         }
         else{
-            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, 30)];
+            _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
             if (![_inputText isEqual:[NSNull null]]) {
                 _textField.text = _inputText;
@@ -92,11 +110,33 @@ static int titleLabelWidth = 90;
     _textField.text = timestamp;
 }
 
+- (NSMutableArray*)getSelectList:(NSString*)typeId
+{
+    NSInteger tid = 0;
+    if (![typeId isEqual:[NSNull null]]) {
+        tid = typeId.intValue;
+    }
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSMutableArray* resultList = [[NSMutableArray alloc] init];
+    for(SysTypeValue *sysTypeValue in delegate.sysTypeValueList){
+        if (sysTypeValue != nil && sysTypeValue.typeId == tid) {
+            [resultList addObject:sysTypeValue];
+        }
+    }
+    return resultList;
+}
+
 - (void) dealloc
 {
     [super dealloc];
     TT_RELEASE_SAFELY(_titleLabel);
-    TT_RELEASE_SAFELY(_textField)
+    TT_RELEASE_SAFELY(_textField);
+    TT_RELEASE_SAFELY(_radioLabel);
+    //TT_RELEASE_SAFELY(_radioButton);
+}
+
+-(void)radioButtonSelectedAtIndex:(NSUInteger)index inGroup:(NSString *)groupId inValue:(NSString *)groupValue{
+    _textValue = groupValue;
 }
 /*
 // Only override drawRect: if you perform custom drawing.

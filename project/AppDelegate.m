@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "SysTypeValue.h"
 #import "TUser.h"
+#import "AssetsTypeTop.h"
 #import "LoginViewController.h"
 #import "Reachability.h"
 #import "TabBarController.h"
@@ -21,7 +22,7 @@
 #import "AssetsRecordTableViewController.h"
 
 @implementation AppDelegate
-@synthesize SERVER_HOST,JSESSIONID,sysTypeValueList = _sysTypeValueList,userList = _userList;
+@synthesize SERVER_HOST,JSESSIONID,sysTypeValueList = _sysTypeValueList,userList = _userList,assetsTypeTopList = _assetsTypeTopList;
 
 - (void)dealloc
 {
@@ -156,6 +157,24 @@
     request.response = [[[TTURLDataResponse alloc] init] autorelease];
 }
 
+- (void)setAssetsTypeTop
+{
+    NSString *server_base = [NSString stringWithFormat:@"%@/assets/assetstypetop!getAssetsTypeTopList.action", SERVER_HOST];
+    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+    [request setHttpMethod:@"POST"];
+    
+    request.contentType=@"application/x-www-form-urlencoded";
+    NSString* postBodyString = [NSString stringWithFormat:@"isMobile=true"];
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+    
+    [request setHttpBody:postData];
+    request.userInfo = @"AssetsTypeTop";
+    [request send];
+    
+    request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)requestDidStartLoad:(TTURLRequest*)request {
@@ -191,6 +210,11 @@
             TUser *tUser = [[TUser alloc] init];
             _userList = [tUser initTUser:[jsonDic objectForKey:@"userList"]];
             TT_RELEASE_SAFELY(tUser);
+        }
+        else if (request.userInfo != nil && [request.userInfo compare:@"AssetsTypeTop" options:comparisonOptions] == NSOrderedSame) {
+            AssetsTypeTop *assetsTypeTop = [[AssetsTypeTop alloc] init];
+            _assetsTypeTopList = [assetsTypeTop initAssetsTypeTop:[jsonDic objectForKey:@"assetsTypeTopList"]];
+            TT_RELEASE_SAFELY(assetsTypeTop);
         }
     }
 }

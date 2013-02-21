@@ -13,13 +13,13 @@
 #import "SBJson.h"
 #import "SysTypeValue.h"
 #import "TUser.h"
+#import "AssetsTypeTop.h"
 
 @interface AssetsRecordViewController ()
 
 @end
 static int LOGINTAG = -1;       //需要退回到登陆状态的TAG标志
 static int INPUTHEIGHT = 30;
-static int TEXTAREAHEIGHT = 130;
 static int _X = 10;
 static int _P = 10;
 @implementation AssetsRecordViewController
@@ -30,6 +30,7 @@ static int _P = 10;
     self = [super init];
     if (self) {
         _assetsRecord = [query objectForKey:@"assetsRecord"];
+        _editTag = 1;
     }
     return self;
 }
@@ -38,6 +39,7 @@ static int _P = 10;
 {
     self = [super init];
     if (self) {
+        _editTag = 0;
         _pageTag = pageTag;
     }
     return self;
@@ -45,6 +47,7 @@ static int _P = 10;
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
     switch (_pageTag) {
         case 1:
             NSLog(@"search");
@@ -72,43 +75,38 @@ static int _P = 10;
     //开启下方工具栏
     [self.navigationController setToolbarHidden:NO];
     NSMutableArray *toolbarArray = [[[NSMutableArray alloc] init] autorelease];
-    _editTag = 1;
-    if (!_assetsRecord) {
-        _editTag = 0;
-        _assetsRecord = [[AssetsRecord alloc] init];
-    }
-    else {
-        if (_assetsRecord.useStatus) {
-            NSString *outTitle = @"出库";
-            UIBarButtonItem *changeButton;
-            int position = 0;
-            if (![_assetsRecord.position isEqual:[NSNull null]]) {
-                position = _assetsRecord.position.intValue;
-            }
-            switch (position) {
-                case 4:
-                    NSLog(@"search");
-                    outTitle = @"出库";
-                    break;
-                default:
-                    NSLog(@"edit");
-                    outTitle = @"拆除";
-                    changeButton = [[[UIBarButtonItem alloc] initWithTitle:@"替换" style:UIBarButtonItemStyleBordered
-                                                                    target:self
-                                                                    action:@selector(changeStore)] autorelease];
-                    [toolbarArray addObject:changeButton];
-                    break;
-            }
-            UIBarButtonItem *outButton = [[[UIBarButtonItem alloc] initWithTitle:outTitle style:UIBarButtonItemStyleBordered
-                                                                          target:self
-                                                                          action:@selector(outStore)] autorelease];
-            [toolbarArray addObject:outButton];
-            UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithTitle:@"报废" style:UIBarButtonItemStyleBordered
-                                                                             target:self
-                                                                             action:@selector(dropStore)] autorelease];
-            [toolbarArray addObject:deleteButton];
+    
+    if (_assetsRecord.useStatus) {
+        NSString *outTitle = @"出库";
+        UIBarButtonItem *changeButton;
+        int position = 0;
+        if (![_assetsRecord.position isKindOfClass:[NSNull class]]) {
+            position = _assetsRecord.position.intValue;
         }
+        switch (position) {
+            case 4:
+                NSLog(@"search");
+                outTitle = @"出库";
+                break;
+            default:
+                NSLog(@"edit");
+                outTitle = @"拆除";
+                changeButton = [[[UIBarButtonItem alloc] initWithTitle:@"替换" style:UIBarButtonItemStyleBordered
+                                                                target:self
+                                                                action:@selector(changeStore)] autorelease];
+                [toolbarArray addObject:changeButton];
+                break;
+        }
+        UIBarButtonItem *outButton = [[[UIBarButtonItem alloc] initWithTitle:outTitle style:UIBarButtonItemStyleBordered
+                                                                      target:self
+                                                                      action:@selector(outStore)] autorelease];
+        [toolbarArray addObject:outButton];
+        UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithTitle:@"报废" style:UIBarButtonItemStyleBordered
+                                                                         target:self
+                                                                         action:@selector(dropStore)] autorelease];
+        [toolbarArray addObject:deleteButton];
     }
+    
     self.toolbarItems = toolbarArray;
     
     self.navigationItem.leftBarButtonItem =
@@ -121,7 +119,6 @@ static int _P = 10;
                                      target:self
                                      action:@selector(saveAssetsRecord)] autorelease];
     
-    [super viewDidLoad];
     UIScrollView *scrollView = [[[UIScrollView alloc] initWithFrame:self.view.frame] autorelease];
     [scrollView setScrollEnabled:YES];
     scrollView.showsVerticalScrollIndicator = TRUE;
@@ -138,21 +135,34 @@ static int _P = 10;
     if (_editTag) {
         _zichanTypeCode.textField.enabled = false;
     }
+    else{
+        _zichanTypeCode.textField.enabled = true;
+    }
     _zichanTypeCode.textField.tag = TypeCodeFieldTag;
     [scrollView addSubview:_zichanTypeCode];
     y = y + _zichanTypeCode.frame.size.height + 2*_P;
     
 	_zichanFactory = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"厂家:" inputType:@"input" inputText:_assetsRecord.factory inputValue:_assetsRecord.factory valueTypeDicCode:nil];
     _zichanFactory.textField.delegate = self;
-    _zichanFactory.textField.enabled = false;
+    if (_editTag) {
+        _zichanFactory.textField.enabled = false;
+    }
+    else{
+        _zichanFactory.textField.enabled = true;
+    }
     [scrollView addSubview:_zichanFactory];
     y = y + _zichanFactory.frame.size.height + 2*_P;
     
-	_typeName = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"型号:" inputType:@"input" inputText:_assetsRecord.typeName inputValue:_assetsRecord.typeName valueTypeDicCode:nil];
-    _typeName.textField.delegate = self;
-    _typeName.textField.enabled = false;
-    [scrollView addSubview:_typeName];
-    y = y + _typeName.frame.size.height + 2*_P;
+	_zichanModel = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"型号:" inputType:@"input" inputText:_assetsRecord.model inputValue:_assetsRecord.model valueTypeDicCode:nil];
+    _zichanModel.textField.delegate = self;
+    if (_editTag) {
+        _zichanModel.textField.enabled = false;
+    }
+    else{
+        _zichanModel.textField.enabled = true;
+    }
+    [scrollView addSubview:_zichanModel];
+    y = y + _zichanModel.frame.size.height + 2*_P;
     
 	_assetsCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产编码:" inputType:@"input" inputText:_assetsRecord.assetsCode inputValue:_assetsRecord.assetsCode valueTypeDicCode:nil];
     _assetsCode.textField.delegate = self;
@@ -201,20 +211,25 @@ static int _P = 10;
     y = y + _resp.frame.size.height + 2*_P;
     
     //开始附加字段的拼接
-    int i = 100;
+    _fujiaIndex = 100;
     for (AssetsProp *assetsProp in _assetsRecord.assetsPropList){
-        i++;
+        _fujiaIndex++;
         if (![assetsProp.showStyle isEqual:[NSNull null]] && [assetsProp.showStyle compare:@"textarea"] == NSOrderedSame) {
-            _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, TEXTAREAHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:assetsProp.value inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
+            _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:assetsProp.value inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
         }
         else if (![assetsProp.showStyle isEqual:[NSNull null]] && [assetsProp.showStyle compare:@"select"] == NSOrderedSame) {
+            _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:[self getTypeValueNameById:assetsProp.value] inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
+            _fujia.textValue = assetsProp.value;
+        }
+        else if (![assetsProp.showStyle isEqual:[NSNull null]] && [assetsProp.showStyle compare:@"radio"] == NSOrderedSame) {
             _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:[self getTypeValueNameById:assetsProp.value] inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
             _fujia.textValue = assetsProp.value;
         }
         else{
             _fujia = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:[NSString stringWithFormat:@"%@:",assetsProp.showName] inputType:assetsProp.showStyle inputText:assetsProp.value inputValue:assetsProp.value valueTypeDicCode:assetsProp.valueTypeDicCode];
         }
-        _fujia.tag = i;
+        _fujia.frame = CGRectMake(_X, y, self.view.frame.size.width, _fujia.viewHeight);
+        _fujia.tag = _fujiaIndex;
         _fujia.textField.delegate = self;
         [scrollView addSubview:_fujia];
         y = y + _fujia.frame.size.height + 2*_P;
@@ -229,25 +244,32 @@ static int _P = 10;
     
     UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
     [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
-    //self.view = _back;
     [scrollView addSubview:_back];
     _back.frame = CGRectMake(0, 0, self.view.frame.size.width, y);
     [_back release];
+    [scrollView sendSubviewToBack:_back];
     
-    [scrollView bringSubviewToFront:_zichanName];
-    [scrollView bringSubviewToFront:_zichanFactory];
-    [scrollView bringSubviewToFront:_typeName];
-    [scrollView bringSubviewToFront:_assetsCode];
-    [scrollView bringSubviewToFront:_barcode];
-    [scrollView bringSubviewToFront:_assetsOwners];
-    [scrollView bringSubviewToFront:_startTimeStr];
-    [scrollView bringSubviewToFront:_valid];
-    [scrollView bringSubviewToFront:_status];
-    [scrollView bringSubviewToFront:_zichanLng];
-    [scrollView bringSubviewToFront:_zichanLat];
-    [scrollView bringSubviewToFront:_fujia];
-    [scrollView bringSubviewToFront:_resp];
-    [scrollView bringSubviewToFront:_remark];
+//    [scrollView bringSubviewToFront:_zichanName];
+//    [scrollView bringSubviewToFront:_zichanTypeCode];
+//    [scrollView bringSubviewToFront:_zichanFactory];
+//    [scrollView bringSubviewToFront:_zichanModel];
+//    [scrollView bringSubviewToFront:_assetsCode];
+//    [scrollView bringSubviewToFront:_barcode];
+//    [scrollView bringSubviewToFront:_assetsOwners];
+//    [scrollView bringSubviewToFront:_startTimeStr];
+//    [scrollView bringSubviewToFront:_valid];
+//    [scrollView bringSubviewToFront:_status];
+//    [scrollView bringSubviewToFront:_zichanLng];
+//    [scrollView bringSubviewToFront:_zichanLat];
+//    //[scrollView bringSubviewToFront:_fujia];
+//    [scrollView bringSubviewToFront:_resp];
+//    [scrollView bringSubviewToFront:_remark];
+//    
+//    for (int j=i; j>100; j--) {
+//        NSLog(@"ddd:%i",j);
+//        AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:j];
+//        [scrollView bringSubviewToFront:aav];
+//    }
     
     self.view = scrollView;
     
@@ -262,57 +284,88 @@ static int _P = 10;
 - (void)saveAssetsRecord
 {
     AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
-    NSString *server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!saveOrUpdateAssetsRecord.action", delegate.SERVER_HOST];
+    NSString *server_base;
+    NSString *assetsRecordStr;
+    //修改
+    if (_editTag) {
+        server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsEdit.action", delegate.SERVER_HOST];
+        assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordUpdate:1"];
+    }
+    else{//新增
+        server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsInsert.action", delegate.SERVER_HOST];
+        assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordUpdate:0"];
+    }
     TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
     [request setHttpMethod:@"POST"];
-    NSString *assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordUpdate:1"];
-    if (![_zichanName.textField.text isEqual:[NSNull null]]) {
+    if (![_zichanName.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",name:'%@'",_zichanName.textField.text];
     }
-    if (![_assetsCode.textField.text isEqual:[NSNull null]]) {
+    if (!_editTag) {
+        if (![_zichanTypeCode.textField.text isKindOfClass:[NSNull class]]) {
+            assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsTypeCode:'%@'",_zichanTypeCode.textValue];
+        }
+        if (![_zichanFactory.textValue isKindOfClass:[NSNull class]]) {
+            assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",factory:'%@'",_zichanFactory.textValue];
+        }
+        if (![_zichanModel.textValue isKindOfClass:[NSNull class]]) {
+            assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",model:'%@'",_zichanModel.textValue];
+        }
+    }
+    if (_zichanTypeCode.textValue != nil && ![_zichanTypeCode.textValue isKindOfClass:[NSNull class]]) {
+        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",typeCode:'%@'",_zichanTypeCode.textValue];
+    }
+    if (_assetsCode.textField.text != nil && ![_assetsCode.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsCode:'%@'",_assetsCode.textField.text];
     }
-    if (![_barcode.textField.text isEqual:[NSNull null]]) {
+    if (_barcode.textField.text != nil && ![_barcode.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",barcode:'%@'",_barcode.textField.text];
     }
-    if (![_assetsOwners.textField.text isEqual:[NSNull null]]) {
+    if (_assetsOwners.textValue != nil &&![_assetsOwners.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsOwners:'%@'",_assetsOwners.textValue];
     }
-    if (![_startTimeStr.textField.text isEqual:[NSNull null]]) {
-        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",startTimeStr:'%@'",_startTimeStr.textField.text];
+    if (_startTimeStr.textField.text != nil && ![_startTimeStr.textField.text isKindOfClass:[NSNull class]]) {
+        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",startTime:'%@'",_startTimeStr.textField.text];
     }
-    if (![_valid.textField.text isEqual:[NSNull null]]) {
+    if (_valid.textField.text != nil && ![_valid.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",valid:'%@'",_valid.textField.text];
     }
-    if (![_status.textField.text isEqual:[NSNull null]]) {
+    if (_status.textValue != nil && ![_status.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",status:'%@'",_status.textValue];
     }
-    if (![_zichanLng.textField.text isEqual:[NSNull null]]) {
+    if (_zichanLng.textField.text != nil && ![_zichanLng.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",lng:'%@'",_zichanLng.textField.text];
     }
-    if (![_zichanLat.textField.text isEqual:[NSNull null]]) {
+    if (_zichanLat.textField.text != nil && ![_zichanLat.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",lat:'%@'",_zichanLat.textField.text];
     }
-    if (![_remark.textField.text isEqual:[NSNull null]]) {
+    if (_remark.textField.text != nil && ![_remark.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",remark:'%@'",_remark.textField.text];
     }
-    if (![_resp.textField.text isEqual:[NSNull null]]) {
+    if (_resp.textField.text != nil && ![_resp.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",resp:'%@'",_resp.textValue];
     }
     if (_assetsRecord.assetsId) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsId:%i",_assetsRecord.assetsId];
     }
     NSString *propStr = [[NSString alloc] init];
-    int i = 100;
+    _fujiaIndex = 100;
     for (AssetsProp *assetsProp in _assetsRecord.assetsPropList){
-        i++;
-        AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:i];
-        if (![aav.textField.text isEqual:[NSNull null]]) {
-            if ([aav.inputType isEqual:[NSNull null]] && ([aav.inputType compare:@"select"] == NSOrderedSame || [aav.inputType compare:@"radio"] == NSOrderedSame)) {
+        _fujiaIndex++;
+        AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:_fujiaIndex];
+        if (aav.inputType != nil && ![aav.inputType isEqual:[NSNull null]] && ([aav.inputType compare:@"select"] == NSOrderedSame || [aav.inputType compare:@"radio"] == NSOrderedSame)) {
+            if (aav.textValue != nil && ![aav.textValue isKindOfClass:[NSNull class]]) {
                 propStr = [propStr stringByAppendingFormat:@",%@:'%@'",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"],aav.textValue];
             }
             else{
+                propStr = [propStr stringByAppendingFormat:@",%@:''",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"]];
+            }
+        }
+        else{
+            if (aav.textField.text != nil && ![aav.textField.text isKindOfClass:[NSNull class]]) {
                 propStr = [propStr stringByAppendingFormat:@",%@:'%@'",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"],aav.textField.text];
+            }
+            else{
+                propStr = [propStr stringByAppendingFormat:@",%@:''",[assetsProp.name stringByReplacingOccurrencesOfString:@"a_f" withString:@"AF"]];
             }
         }
     }
@@ -327,6 +380,7 @@ static int _P = 10;
     NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
     
     [request setHttpBody:postData];
+    request.userInfo = @"saveInfo";
     
     [request send];
     
@@ -335,7 +389,7 @@ static int _P = 10;
 
 - (NSString*)getTypeValueNameById:(NSString*)sId
 {
-    if (![sId isEqual:[NSNull null]]) {
+    if (![sId isKindOfClass:[NSNull class]]) {
         AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
         for(SysTypeValue *sysTypeValue in delegate.sysTypeValueList){
             if (sysTypeValue != nil && [sysTypeValue.sId compare: sId] == NSOrderedSame) {
@@ -348,7 +402,7 @@ static int _P = 10;
 
 - (NSString*)getUserNameById:(NSString*)userId
 {
-    if (![userId isEqual:[NSNull null]]) {
+    if (![userId isKindOfClass:[NSNull class]]) {
         AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
         for(TUser *tUser in delegate.userList){
             if (tUser != nil && tUser.userId == userId.intValue) {
@@ -392,9 +446,18 @@ static int _P = 10;
         [alert release];
     }
     else{
-        UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"保存成功!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
-        [alert show];
-        [alert release];
+        static NSStringCompareOptions comparisonOptions = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
+        if (request.userInfo != nil && [request.userInfo compare:@"AssetsProp" options:comparisonOptions] == NSOrderedSame) {
+            AssetsProp *assetsProp = [[AssetsProp alloc] init];
+            _assetsRecord.assetsPropList = [assetsProp initAssetsPropWithJsonDict:[jsonDic objectForKey:@"assetsPropList"]];
+            TT_RELEASE_SAFELY(assetsProp);
+            [self viewDidLoad];
+        }
+        else if (request.userInfo != nil && [request.userInfo compare:@"saveInfo" options:comparisonOptions] == NSOrderedSame) {
+            UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"保存成功!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+            [alert release];
+        }
     }
 }
 
@@ -554,6 +617,9 @@ static int _P = 10;
     if (textField.tag == UserFieldTag) {
         alertListContent = [self getSelectUserList];
     }
+    else if(textField.tag == TypeCodeFieldTag){
+        alertListContent = [self getSelectAssetsTypeTopList];
+    }
     else{
         alertListContent = [self getSelectList:_autoAdaptedView.valueTypeDicCode];
     }
@@ -569,10 +635,17 @@ static int _P = 10;
     return resultList;
 }
 
+- (NSMutableArray*)getSelectAssetsTypeTopList
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSMutableArray* resultList = [[NSMutableArray alloc] initWithArray:delegate.assetsTypeTopList];
+    return resultList;
+}
+
 - (NSMutableArray*)getSelectList:(NSString*)typeId
 {
     NSInteger tid = 0;
-    if (![typeId isEqual:[NSNull null]]) {
+    if (![typeId isKindOfClass:[NSNull class]]) {
         tid = typeId.intValue;
     }
     AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
@@ -600,8 +673,9 @@ static int _P = 10;
     [UIView commitAnimations];
     
     [_zichanName.textField resignFirstResponder];
+    //[_zichanTypeCode.textField resignFirstResponder];
     [_zichanFactory.textField resignFirstResponder];
-    [_typeName.textField resignFirstResponder];
+    [_zichanModel.textField resignFirstResponder];
     [_assetsCode.textField resignFirstResponder];
     [_barcode.textField resignFirstResponder];
     //[_assetsOwners.textField resignFirstResponder];
@@ -613,6 +687,11 @@ static int _P = 10;
     [_fujia.textField resignFirstResponder];
     [_resp.textField resignFirstResponder];
     [_remark.textField resignFirstResponder];
+    for (int j=_fujiaIndex; j>100; j--) {
+        AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:j];
+        [aav.textField resignFirstResponder];
+    }
+
 }
 
 #pragma mark - Table view data source
@@ -641,6 +720,11 @@ static int _P = 10;
         tuser = [alertListContent objectAtIndex:indexPath.row];
         cell.textLabel.text = tuser.realName;
     }
+    else if(_autoAdaptedView.textField.tag == TypeCodeFieldTag){
+        AssetsTypeTop *att;
+        att = [alertListContent objectAtIndex:indexPath.row];
+        cell.textLabel.text = att.assetsTypeName;
+    }
     else{
         SysTypeValue *stv;
         stv = [alertListContent objectAtIndex:indexPath.row];
@@ -660,6 +744,17 @@ static int _P = 10;
         _autoAdaptedView.textValue = [NSString stringWithFormat:@"%i",tuser.userId];
         _autoAdaptedView.textField.text = tuser.realName;
     }
+    else if (_autoAdaptedView.textField.tag == TypeCodeFieldTag) {
+        AssetsTypeTop *att;
+        att = [alertListContent objectAtIndex:indexPath.row];
+        _autoAdaptedView.textValue = att.assetsTypeCode;
+        _autoAdaptedView.textField.text = att.assetsTypeName;
+        [self setNewAssetsRecordProp:att.assetsTypeCode];
+        _assetsRecord = [[AssetsRecord alloc] init];
+        _assetsRecord.typeCode = att.assetsTypeCode;
+        _assetsRecord.typeName = att.assetsTypeName;
+        _assetsRecord.name = _zichanName.textField.text;
+    }
     else{
         SysTypeValue *stv;
         stv = [alertListContent objectAtIndex:indexPath.row];
@@ -669,4 +764,27 @@ static int _P = 10;
     NSUInteger cancelButtonIndex = dataAlertView.cancelButtonIndex;
     [dataAlertView dismissWithClickedButtonIndex: cancelButtonIndex animated: YES];
 }
+
+//设置新资产的类型字段
+- (void)setNewAssetsRecordProp:(NSString*)assetsTypeCode
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSString *server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!getAssetsPropHtml.action", delegate.SERVER_HOST];
+    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+    [request setHttpMethod:@"POST"];
+    
+    request.contentType=@"application/x-www-form-urlencoded";
+    NSString* postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsTypeCode=%@",assetsTypeCode];
+    postBodyString = [postBodyString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+    
+    [request setHttpBody:postData];
+    request.userInfo = @"AssetsProp";
+    [request send];
+    
+    request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
+
 @end

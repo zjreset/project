@@ -13,7 +13,7 @@
 
 -(NSMutableArray*) initAssetsTypeTop:(NSDictionary *)jsonDic
 {
-    NSMutableArray * assetsTypeTopList = [[[NSMutableArray alloc] init] autorelease];
+    NSMutableArray * assetsTypeTopList = [[NSMutableArray alloc] init];
     if (jsonDic != nil) {
         AssetsTypeTop *att;
         for(NSDictionary* dictionary in jsonDic) {
@@ -28,7 +28,7 @@
             att.assetsTypeCode = [dictionary objectForKey:@"assetsTypeCode"];
             att.remark = [dictionary objectForKey:@"remark"];
             att.count = [dictionary objectForKey:@"count"];
-            att.icon = [NSString stringWithFormat:@"bundle://%@.png",[dictionary objectForKey:@"icon"]];
+            att.icon = [NSString stringWithFormat:@"bundle://%@.png",[dictionary objectForKey:@"iconCls"]];
             att.URL = [NSString stringWithFormat:@"fb://item%@",att.assetsTypeCode];
             [assetsTypeTopList addObject:att];
         }

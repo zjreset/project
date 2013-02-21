@@ -42,6 +42,9 @@
 		845A4D6916B37210007B537B /* desktop-task.png in Resources */ = {isa = PBXBuildFile; fileRef = 845A4D6216B37210007B537B /* desktop-task.png */; };
 		846C8C6D16D07A9C00C2FC85 /* SysTypeValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 846C8C6C16D07A9C00C2FC85 /* SysTypeValue.m */; };
 		84726C7016D3198800B56E1A /* TUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 84726C6F16D3198800B56E1A /* TUser.m */; };
+		84726CC516D5C34100B56E1A /* RadioButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 84726CC416D5C34100B56E1A /* RadioButton.m */; };
+		84726CC816D5C38100B56E1A /* RadioButton-Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 84726CC616D5C38100B56E1A /* RadioButton-Selected.png */; };
+		84726CC916D5C38100B56E1A /* RadioButton-Unselected.png in Resources */ = {isa = PBXBuildFile; fileRef = 84726CC716D5C38100B56E1A /* RadioButton-Unselected.png */; };
 		847AE06116A7D205001D37D3 /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 847AE02416A7D205001D37D3 /* NSObject+SBJson.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		847AE06216A7D205001D37D3 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 847AE02716A7D205001D37D3 /* SBJsonParser.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		847AE06316A7D205001D37D3 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 847AE02916A7D205001D37D3 /* SBJsonStreamParser.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -412,6 +415,10 @@
 		846C8C6C16D07A9C00C2FC85 /* SysTypeValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SysTypeValue.m; sourceTree = "<group>"; };
 		84726C6E16D3198800B56E1A /* TUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUser.h; sourceTree = "<group>"; };
 		84726C6F16D3198800B56E1A /* TUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TUser.m; sourceTree = "<group>"; };
+		84726CC316D5C34100B56E1A /* RadioButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioButton.h; sourceTree = "<group>"; };
+		84726CC416D5C34100B56E1A /* RadioButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioButton.m; sourceTree = "<group>"; };
+		84726CC616D5C38100B56E1A /* RadioButton-Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RadioButton-Selected.png"; sourceTree = "<group>"; };
+		84726CC716D5C38100B56E1A /* RadioButton-Unselected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RadioButton-Unselected.png"; sourceTree = "<group>"; };
 		847AE02316A7D205001D37D3 /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
 		847AE02416A7D205001D37D3 /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJson.m"; sourceTree = "<group>"; };
 		847AE02516A7D205001D37D3 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJson.h; sourceTree = "<group>"; };
@@ -758,6 +765,8 @@
 		8441D1B516AFC39700830515 /* BaseView */ = {
 			isa = PBXGroup;
 			children = (
+				84726CC316D5C34100B56E1A /* RadioButton.h */,
+				84726CC416D5C34100B56E1A /* RadioButton.m */,
 				8441D1B616AFC3EE00830515 /* AutoAdaptedView.h */,
 				8441D1B716AFC3EE00830515 /* AutoAdaptedView.m */,
 			);
@@ -1046,6 +1055,8 @@
 		84C9B88916AA75B500F97CEF /* images */ = {
 			isa = PBXGroup;
 			children = (
+				84726CC616D5C38100B56E1A /* RadioButton-Selected.png */,
+				84726CC716D5C38100B56E1A /* RadioButton-Unselected.png */,
 				847BE28E16B91978001B70CB /* assetstypetop */,
 				845A4D5C16B37210007B537B /* desktop-assetsRecord.png */,
 				845A4D5D16B37210007B537B /* desktop-assetsRecordAnaly.png */,
@@ -1403,6 +1414,8 @@
 				84BE39FA16BCFFFC006B768A /* icon_xudiancizhu.png in Resources */,
 				84BE39FB16BCFFFC006B768A /* icon_yiqiyibiao.png in Resources */,
 				84BE39FC16BCFFFC006B768A /* icon_youji.png in Resources */,
+				84726CC816D5C38100B56E1A /* RadioButton-Selected.png in Resources */,
+				84726CC916D5C38100B56E1A /* RadioButton-Unselected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1456,6 +1469,7 @@
 				842B47A016C23BC900790A31 /* AssetsProp.m in Sources */,
 				846C8C6D16D07A9C00C2FC85 /* SysTypeValue.m in Sources */,
 				84726C7016D3198800B56E1A /* TUser.m in Sources */,
+				84726CC516D5C34100B56E1A /* RadioButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

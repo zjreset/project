@@ -28,5 +28,6 @@
 @property (nonatomic, retain) NSString *value;
 
 -(NSMutableArray*) initAssetsPropWithJsonStr:(NSString *)jsonStr;
+-(NSMutableArray*) initAssetsPropWithJsonDict:(NSDictionary *)jsonDic;
 
 @end

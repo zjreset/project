@@ -15,35 +15,33 @@
 {
     NSMutableArray * sysTypeValueList = [[NSMutableArray alloc] init];
     if (jsonDic != nil) {
-        if (jsonDic != nil) {
-            SysTypeValue *ap;
-            for (NSDictionary* dictionary in jsonDic) {
-                ap = [[[SysTypeValue alloc] init] autorelease];
-                ap.sId = [dictionary objectForKey:@"id"];
-                if(![[dictionary objectForKey:@"typeId"] isEqual:[NSNull null]]){
-                    ap.typeId = [[dictionary objectForKey:@"typeId"] integerValue];
-                }
-                else{
-                    ap.typeId = 0;
-                }
-                if(![[dictionary objectForKey:@"sortNum"] isEqual:[NSNull null]]){
-                    ap.sortNum = [[dictionary objectForKey:@"sortNum"] integerValue];
-                }
-                else{
-                    ap.sortNum = 0;
-                }
-                if(![[dictionary objectForKey:@"isUsed"] isEqual:[NSNull null]]){
-                    ap.isUsed = [[dictionary objectForKey:@"isUsed"] integerValue];
-                }
-                else{
-                    ap.isUsed = 0;
-                }
-                ap.nameEn = [dictionary objectForKey:@"nameEn"];
-                ap.name = [dictionary objectForKey:@"name"];
-                ap.nameNls = [dictionary objectForKey:@"nameNls"];
-                ap.parentId = [dictionary objectForKey:@"parentId"];
-                [sysTypeValueList addObject:ap];
+        SysTypeValue *ap;
+        for (NSDictionary* dictionary in jsonDic) {
+            ap = [[[SysTypeValue alloc] init] autorelease];
+            ap.sId = [dictionary objectForKey:@"id"];
+            if(![[dictionary objectForKey:@"typeId"] isEqual:[NSNull null]]){
+                ap.typeId = [[dictionary objectForKey:@"typeId"] integerValue];
             }
+            else{
+                ap.typeId = 0;
+            }
+            if(![[dictionary objectForKey:@"sortNum"] isEqual:[NSNull null]]){
+                ap.sortNum = [[dictionary objectForKey:@"sortNum"] integerValue];
+            }
+            else{
+                ap.sortNum = 0;
+            }
+            if(![[dictionary objectForKey:@"isUsed"] isEqual:[NSNull null]]){
+                ap.isUsed = [[dictionary objectForKey:@"isUsed"] integerValue];
+            }
+            else{
+                ap.isUsed = 0;
+            }
+            ap.nameEn = [dictionary objectForKey:@"nameEn"];
+            ap.name = [dictionary objectForKey:@"name"];
+            ap.nameNls = [dictionary objectForKey:@"nameNls"];
+            ap.parentId = [dictionary objectForKey:@"parentId"];
+            [sysTypeValueList addObject:ap];
         }
     }
     return sysTypeValueList;

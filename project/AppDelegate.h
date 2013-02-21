@@ -15,6 +15,7 @@
     Reachability  *hostReach;   //对手机网络状况的检测
     NSMutableArray *_sysTypeValueList;
     NSMutableArray *_userList;
+    NSMutableArray *_assetsTypeTopList;
 }
 @property (strong, nonatomic) UIWindow *window;
 
@@ -25,8 +26,10 @@
 @property (nonatomic,retain) NSString *JSESSIONID;
 @property (nonatomic,retain) NSMutableArray *sysTypeValueList;
 @property (nonatomic,retain) NSMutableArray *userList;
+@property (nonatomic,retain) NSMutableArray *assetsTypeTopList;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 - (void)setSysTypeValues;
 - (void)setTUser;
+- (void)setAssetsTypeTop;
 @end

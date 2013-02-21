@@ -358,6 +358,8 @@
         [delegate setSysTypeValues];
         //获取所有用户信息
         [delegate setTUser];
+        //获取资产大类信息
+        [delegate setAssetsTypeTop];
         [self LoginSuccess];
     }
 }
