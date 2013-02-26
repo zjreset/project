@@ -16,6 +16,7 @@
     NSMutableArray *_sysTypeValueList;
     NSMutableArray *_userList;
     NSMutableArray *_assetsTypeTopList;
+    NSMutableArray *_assetsTypeList;
 }
 @property (strong, nonatomic) UIWindow *window;
 
@@ -27,9 +28,11 @@
 @property (nonatomic,retain) NSMutableArray *sysTypeValueList;
 @property (nonatomic,retain) NSMutableArray *userList;
 @property (nonatomic,retain) NSMutableArray *assetsTypeTopList;
+@property (nonatomic,retain) NSMutableArray *assetsTypeList;
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 - (void)setSysTypeValues;
 - (void)setTUser;
 - (void)setAssetsTypeTop;
+- (void)setAssetsType;
 @end

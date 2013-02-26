@@ -10,6 +10,7 @@
 #import "SysTypeValue.h"
 #import "TUser.h"
 #import "AssetsTypeTop.h"
+#import "AssetsType.h"
 #import "LoginViewController.h"
 #import "Reachability.h"
 #import "TabBarController.h"
@@ -22,7 +23,7 @@
 #import "AssetsRecordTableViewController.h"
 
 @implementation AppDelegate
-@synthesize SERVER_HOST,JSESSIONID,sysTypeValueList = _sysTypeValueList,userList = _userList,assetsTypeTopList = _assetsTypeTopList;
+@synthesize SERVER_HOST,JSESSIONID,sysTypeValueList = _sysTypeValueList,userList = _userList,assetsTypeTopList = _assetsTypeTopList,assetsTypeList = _assetsTypeList;
 
 - (void)dealloc
 {
@@ -33,6 +34,7 @@
     TT_RELEASE_SAFELY(SERVER_HOST);
     TT_RELEASE_SAFELY(JSESSIONID);
     TT_RELEASE_SAFELY(_sysTypeValueList);
+    TT_RELEASE_SAFELY(_assetsTypeList);
     [super dealloc];
 }
 
@@ -79,11 +81,11 @@
     //菜单页
     [map from:@"tt://entityMenu/(initWithMenu:)" toSharedViewController:[EntityBaseMenuController class]];
     //站址详情
-    [map from:@"tt://entityBaseGridQuery?url=(initWithURL:)" toViewController:[EntityBaseGridViewController class]];
+    [map from:@"tt://entityBaseGridQuery?page=(initWithURL:)" toViewController:[EntityBaseGridViewController class]];
     //菜单页
     [map from:@"tt://assetsRecordQuery?url=(initWithNavigatorURL:)" toModalViewController:[AssetsRecordViewController class]];
     //菜单页
-    [map from:@"tt://assetsRecordPage/(initWithPageTag:)" toModalViewController:[AssetsRecordViewController class]];
+    [map from:@"tt://assetsRecordPage?page=(initWithPageTag:)" toModalViewController:[AssetsRecordViewController class]];
     
     // Before opening the tab bar, we see if the controller history was persisted the last time
     if (![navigator restoreViewControllers]) {
@@ -175,6 +177,24 @@
     request.response = [[[TTURLDataResponse alloc] init] autorelease];
 }
 
+- (void)setAssetsType
+{
+    NSString *server_base = [NSString stringWithFormat:@"%@/assets/assetstype!getAssetsTypeList.action", SERVER_HOST];
+    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+    [request setHttpMethod:@"POST"];
+    
+    request.contentType=@"application/x-www-form-urlencoded";
+    NSString* postBodyString = [NSString stringWithFormat:@"isMobile=true"];
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+    
+    [request setHttpBody:postData];
+    request.userInfo = @"AssetsType";
+    [request send];
+    
+    request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)requestDidStartLoad:(TTURLRequest*)request {
@@ -215,6 +235,11 @@
             AssetsTypeTop *assetsTypeTop = [[AssetsTypeTop alloc] init];
             _assetsTypeTopList = [assetsTypeTop initAssetsTypeTop:[jsonDic objectForKey:@"assetsTypeTopList"]];
             TT_RELEASE_SAFELY(assetsTypeTop);
+        }
+        else if (request.userInfo != nil && [request.userInfo compare:@"AssetsType" options:comparisonOptions] == NSOrderedSame) {
+            AssetsType *assetsType = [[AssetsType alloc] init];
+            _assetsTypeList = [assetsType initAssetsType:[jsonDic objectForKey:@"assetsTypeList"]];
+            TT_RELEASE_SAFELY(assetsType);
         }
     }
 }

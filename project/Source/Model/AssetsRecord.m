@@ -73,10 +73,7 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
                 ar.startTimeStr = [dictionary objectForKey:@"startTimeStr"];
             }
             if (![[dictionary objectForKey:@"valid"] isEqual:[NSNull null]]) {
-                ar.valid = [[dictionary objectForKey:@"valid"] doubleValue];
-            }
-            else{
-                ar.valid = 0;
+                ar.valid = [dictionary objectForKey:@"valid"];
             }
             if(![[dictionary objectForKey:@"isChange"] isEqual:[NSNull null]]){
                 ar.isChange = [[dictionary objectForKey:@"isChange"] integerValue];
@@ -88,16 +85,10 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
                 ar.changeType = [dictionary objectForKey:@"changeType"];
             }
             if (![[dictionary objectForKey:@"lng"] isEqual:[NSNull null]]) {
-                ar.lng = [[dictionary objectForKey:@"lng"] doubleValue];
-            }
-            else{
-                ar.lng = 0;
+                ar.lng = [dictionary objectForKey:@"lng"];
             }
             if (![[dictionary objectForKey:@"lat"] isEqual:[NSNull null]]) {
-                ar.lat = [[dictionary objectForKey:@"lat"] doubleValue];
-            }
-            else{
-                ar.lat = 0;
+                ar.lat = [dictionary objectForKey:@"lat"];
             }
             if (![[dictionary objectForKey:@"resp"] isEqual:[NSNull null]]) {
                 ar.resp = [dictionary objectForKey:@"resp"];

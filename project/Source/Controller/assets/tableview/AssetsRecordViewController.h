@@ -9,6 +9,7 @@
 #import <Three20UI/Three20UI.h>
 #import "AssetsRecord.h"
 #import "AutoAdaptedView.h"
+#import "CAlertView.h"
 
 typedef enum {
     PageNone,
@@ -23,10 +24,20 @@ typedef enum {
     FieldTagNone,
     TypeCodeFieldTag,
     UserFieldTag,
-    TypeValueFieldTag
+    TypeValueFieldTag,
+    FactoryFieldTag,
+    ModelFieldTag
 }FieldTag;
 
-@interface AssetsRecordViewController : TTViewController<UIAlertViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
+typedef enum {
+    AlertViewTagNone,
+    AlertViewTagIn,
+    AlertViewTagChange,
+    AlertViewTagOut,
+    AlertViewTagDrop
+}AlertViewTag;
+
+@interface AssetsRecordViewController : TTViewController<UIAlertViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,CAlertViewDelegate>
 {
     AssetsRecord *_assetsRecord;
     NSInteger _pageTag;
@@ -49,8 +60,11 @@ typedef enum {
     AutoAdaptedView *_fujia;                //附加字段,根据资产类型生成不同字段
     AutoAdaptedView *_autoAdaptedView;      //临时中间字段,作为区分操作字段
     NSInteger       _fujiaIndex;            //附加字段的tag值
+    NSInteger       _baseId;                //新增资产时的关联物理点编号
+    NSString        *_baseType;             //新增资产时的类型
 }
 @property (nonatomic,retain) UITableView *alertTableView;
+@property (nonatomic,retain) UIScrollView *alertScrollView;
 @property (nonatomic,retain) UIAlertView *dataAlertView;
 @property (nonatomic,retain) NSMutableArray *alertListContent;
 @end

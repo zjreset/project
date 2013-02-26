@@ -93,8 +93,8 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
     _searchController.searchBar.delegate = self;
     _searchController.delegate = self;
     
-    
-    [self setRightBarButtonItem];
+    //新增资产需要关联到具体的物理点,因此此处去除掉新增资产的按钮
+    //[self setRightBarButtonItem];
     
     self.navigationItem.leftBarButtonItem =
     [[[UIBarButtonItem alloc] initWithTitle:@"返回主页面" style:UIBarButtonItemStyleBordered

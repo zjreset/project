@@ -28,16 +28,16 @@ static int titleLabelWidth = 90;
         _textValue = _inputValue;
         _valueTypeDicCode = sValueTypeDicCode;
         _inputType = sInputType;
-        if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"select"] == NSOrderedSame) {
+        if (sInputType && ![sInputType isEqual:[NSNull null]] && [sInputType compare:@"select"] == NSOrderedSame) {
             _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
-            if (![_inputText isEqual:[NSNull null]]) {
-                _textField.text = _inputText;
+            if (_inputText != nil && ![_inputText isEqual:[NSNull null]]) {
+                _textField.text = [NSString stringWithFormat:@"%@",_inputText];
             }
             _textField.backgroundColor = [UIColor grayColor];
             [self addSubview:_textField];
         }
-        else if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"radio"] == NSOrderedSame) {
+        else if (sInputType && ![sInputType isEqual:[NSNull null]] && [sInputType compare:@"radio"] == NSOrderedSame) {
             NSMutableArray *typeValueList = [self getSelectList:sValueTypeDicCode];
             int i=0,radioheight = 25;
             for (SysTypeValue *sysTypeValue in typeValueList){
@@ -56,34 +56,36 @@ static int titleLabelWidth = 90;
             }
             [RadioButton addObserverForGroupId:_title observer:self];
         }
-        else if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"textarea"] == NSOrderedSame) {
+        else if (sInputType && ![sInputType isEqual:[NSNull null]] && [sInputType compare:@"textarea"] == NSOrderedSame) {
             viewHeight = 130;
             _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
-            if (![_inputText isEqual:[NSNull null]]) {
-                _textField.text = _inputText;
+            if (_inputText != nil && ![_inputText isEqual:[NSNull null]]) {
+                _textField.text = [NSString stringWithFormat:@"%@",_inputText];
             }
             _textField.backgroundColor = [UIColor grayColor];
             [self addSubview:_textField];
         }
-        else if (![sInputType isEqual:[NSNull null]] && [sInputType compare:@"date"] == NSOrderedSame) {
+        else if (sInputType && ![sInputType isEqual:[NSNull null]] && [sInputType compare:@"date"] == NSOrderedSame) {
             _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
-            if (![_inputText isEqual:[NSNull null]]) {
-                _textField.text = _inputText;
+            if (_inputText != nil && ![_inputText isEqual:[NSNull null]]) {
+                _textField.text = [NSString stringWithFormat:@"%@",_inputText];
             }
             _textField.backgroundColor = [UIColor grayColor];
             
             UIDatePicker *dPicker = [[[UIDatePicker alloc]init] autorelease];
             [dPicker setDatePickerMode:UIDatePickerModeDate];
             _textField.inputView = dPicker;
-//            NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-//            formatter.dateFormat = @"yyyy-MM-dd";
-//            //NSTimeInterval interval = 24*60*60*1;
-//            NSDate *date = [[NSDate alloc] init];
-//            NSString *timestamp = [formatter stringFromDate:date];
-//            _textField.text = timestamp;
-//            [date release];
+            if (!_inputValue) {
+                NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+                formatter.dateFormat = @"yyyy-MM-dd";
+                //NSTimeInterval interval = 24*60*60*1;
+                NSDate *date = [[NSDate alloc] init];
+                NSString *timestamp = [formatter stringFromDate:date];
+                _textField.text = timestamp;
+                [date release];
+            }
             [dPicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventAllEvents];
             
             [self addSubview:_textField];
@@ -91,8 +93,8 @@ static int titleLabelWidth = 90;
         else{
             _textField = [[UITextField alloc] initWithFrame:CGRectMake(titleLabelWidth+10, 0, frame.size.width-titleLabelWidth-35, viewHeight)];
             _textField.textAlignment = NSTextAlignmentLeft;
-            if (![_inputText isEqual:[NSNull null]]) {
-                _textField.text = _inputText;
+            if (_inputText != nil && ![_inputText isEqual:[NSNull null]]) {
+                _textField.text = [NSString stringWithFormat:@"%@",_inputText];
             }
             _textField.backgroundColor = [UIColor grayColor];
             [self addSubview:_textField];

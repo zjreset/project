@@ -29,7 +29,9 @@
 		841C56F516BF52740003E83F /* EncoderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C56F416BF52740003E83F /* EncoderViewController.m */; };
 		841C56FB16BF597D0003E83F /* DecoderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C56FA16BF597D0003E83F /* DecoderViewController.m */; };
 		841C570016BF66800003E83F /* libQREncoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 841C56FD16BF66800003E83F /* libQREncoder.a */; };
+		842589D616DCBDFB00669EE6 /* CAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 842589D516DCBDFB00669EE6 /* CAlertView.m */; };
 		842B47A016C23BC900790A31 /* AssetsProp.m in Sources */ = {isa = PBXBuildFile; fileRef = 842B479F16C23BC900790A31 /* AssetsProp.m */; };
+		843460B116D7615A0045C5F7 /* AssetsType.m in Sources */ = {isa = PBXBuildFile; fileRef = 843460B016D7615A0045C5F7 /* AssetsType.m */; };
 		8441D1B816AFC3EE00830515 /* AutoAdaptedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8441D1B716AFC3EE00830515 /* AutoAdaptedView.m */; };
 		844EF48E16B7B8A2007BAD71 /* SubMainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 844EF48D16B7B8A2007BAD71 /* SubMainView.m */; };
 		845A4D5B16B36D9D007B537B /* CustomDaragRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 845A4D5A16B36D9D007B537B /* CustomDaragRefresh.m */; };
@@ -396,8 +398,12 @@
 		841C56FD16BF66800003E83F /* libQREncoder.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libQREncoder.a; sourceTree = "<group>"; };
 		841C56FE16BF66800003E83F /* QRCorrectionLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRCorrectionLevel.h; sourceTree = "<group>"; };
 		841C56FF16BF66800003E83F /* QREncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QREncoder.h; sourceTree = "<group>"; };
+		842589D416DCBDFB00669EE6 /* CAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAlertView.h; sourceTree = "<group>"; };
+		842589D516DCBDFB00669EE6 /* CAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAlertView.m; sourceTree = "<group>"; };
 		842B479E16C23BC900790A31 /* AssetsProp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetsProp.h; sourceTree = "<group>"; };
 		842B479F16C23BC900790A31 /* AssetsProp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AssetsProp.m; sourceTree = "<group>"; };
+		843460AF16D7615A0045C5F7 /* AssetsType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetsType.h; sourceTree = "<group>"; };
+		843460B016D7615A0045C5F7 /* AssetsType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AssetsType.m; sourceTree = "<group>"; };
 		8441D1B616AFC3EE00830515 /* AutoAdaptedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoAdaptedView.h; sourceTree = "<group>"; };
 		8441D1B716AFC3EE00830515 /* AutoAdaptedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoAdaptedView.m; sourceTree = "<group>"; };
 		844EF48C16B7B8A2007BAD71 /* SubMainView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubMainView.h; sourceTree = "<group>"; };
@@ -656,6 +662,8 @@
 				846C8C6C16D07A9C00C2FC85 /* SysTypeValue.m */,
 				84726C6E16D3198800B56E1A /* TUser.h */,
 				84726C6F16D3198800B56E1A /* TUser.m */,
+				843460AF16D7615A0045C5F7 /* AssetsType.h */,
+				843460B016D7615A0045C5F7 /* AssetsType.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -722,6 +730,15 @@
 				841C56FF16BF66800003E83F /* QREncoder.h */,
 			);
 			path = QREncoder;
+			sourceTree = "<group>";
+		};
+		842589D316DCBDDF00669EE6 /* AlertView */ = {
+			isa = PBXGroup;
+			children = (
+				842589D416DCBDFB00669EE6 /* CAlertView.h */,
+				842589D516DCBDFB00669EE6 /* CAlertView.m */,
+			);
+			path = AlertView;
 			sourceTree = "<group>";
 		};
 		84263AF516A78316003E4E52 /* main */ = {
@@ -798,6 +815,7 @@
 		847ADFCE16A7D205001D37D3 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				842589D316DCBDDF00669EE6 /* AlertView */,
 				841C56DC16BF52110003E83F /* ZBarSDK */,
 				840B691216BA4C08006670C3 /* StyleSheet */,
 				845A4D5816B36D9D007B537B /* DaragRefresh */,
@@ -1470,6 +1488,8 @@
 				846C8C6D16D07A9C00C2FC85 /* SysTypeValue.m in Sources */,
 				84726C7016D3198800B56E1A /* TUser.m in Sources */,
 				84726CC516D5C34100B56E1A /* RadioButton.m in Sources */,
+				843460B116D7615A0045C5F7 /* AssetsType.m in Sources */,
+				842589D616DCBDFB00669EE6 /* CAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

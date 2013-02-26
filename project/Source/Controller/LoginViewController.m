@@ -360,6 +360,8 @@
         [delegate setTUser];
         //获取资产大类信息
         [delegate setAssetsTypeTop];
+        //获取资产小类信息
+        [delegate setAssetsType];
         [self LoginSuccess];
     }
 }

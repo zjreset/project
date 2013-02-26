@@ -107,37 +107,36 @@ static int LOGINTAG = -1;       //需要退回到登陆状态的TAG标志
 
 - (void)setRightBarButtonItem
 {
+    NSString *title = @"新增资产";
     switch (_page) {
         case EntityBaseGridMenuPageAssetsSearch:
             
-            return;
+            break;
         case EntityBaseGridMenuPageAssetsStore:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"资产入库" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/2"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
+            title = @"资产入库";
+            break;
         case EntityBaseGridMenuPageAssetsSite:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/3"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
+            
+            break;
         case EntityBaseGridMenuPageAssetsRoom:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/4"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
+            
+            break;
         case EntityBaseGridMenuPageAssetsCar:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/5"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
+            
+            break;
         default:
-            return;
+            break;
     }
+    self.navigationItem.rightBarButtonItem =
+    [[[UIBarButtonItem alloc] initWithTitle:title style:UIBarButtonItemStyleBordered
+                                     target:self
+                                     action:@selector(selectButtonItem)] autorelease];
+}
+
+- (void) selectButtonItem
+{
+    TTURLAction *action =  [[TTURLAction actionWithURLPath:[NSString stringWithFormat:@"tt://assetsRecordPage?page=%i&baseId=%i&bastType=%@",_page,_entityBase.baseId,_entityBase.baseType]] applyAnimated:YES];
+    [[TTNavigator navigator] openURLAction:action];
 }
 
 - (void) setLauncherItem

@@ -91,48 +91,10 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
     _searchController.searchBar.delegate = self;
     _searchController.delegate = self;
     
-    
-    [self setRightBarButtonItem];
-    
     self.navigationItem.leftBarButtonItem =
     [[[UIBarButtonItem alloc] initWithTitle:@"返回主页面" style:UIBarButtonItemStyleBordered
                                      target:@"tt://main"
                                      action:@selector(openURLFromButton:)] autorelease];
-}
-
-- (void)setRightBarButtonItem
-{
-    switch (_page) {
-        case EntityBaseMenuPageAssetsSearch:
-            
-            return;
-        case EntityBaseMenuPageAssetsStore:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"资产入库" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/2"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        case EntityBaseMenuPageAssetsSite:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/3"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        case EntityBaseMenuPageAssetsRoom:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/4"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        case EntityBaseMenuPageAssetsCar:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/5"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        default:
-            return;
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +145,7 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
 - (void) didSelectObject:(id)object atIndexPath:(NSIndexPath *)indexPath
 {
     if ([object userInfo]) {
-        TTURLAction *action =  [[[TTURLAction actionWithURLPath:@"tt://entityBaseGridQuery"]
+        TTURLAction *action =  [[[TTURLAction actionWithURLPath:[NSString stringWithFormat:@"tt://entityBaseGridQuery?page=%i",_page]]
                                  applyQuery:[NSDictionary dictionaryWithObject:[object userInfo] forKey:@"entityBase"]]
                                 applyAnimated:YES];
         [[TTNavigator navigator] openURLAction:action];

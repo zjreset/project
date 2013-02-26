@@ -23,11 +23,11 @@
 @property (nonatomic, retain) NSString *status;
 @property (nonatomic) NSInteger useStatus;
 @property (nonatomic, retain) NSString *startTimeStr;
-@property (nonatomic) double valid;
+@property (nonatomic, retain) NSString * valid;
 @property (nonatomic) NSInteger isChange;
 @property (nonatomic, retain) NSString *changeType;
-@property (nonatomic) double lng;
-@property (nonatomic) double lat;
+@property (nonatomic, retain) NSString *lng;
+@property (nonatomic, retain) NSString *lat;
 @property (nonatomic, retain) NSString *resp;
 @property (nonatomic, retain) NSString *remark;
 @property (nonatomic, retain) NSString *typeName;
