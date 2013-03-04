@@ -23,7 +23,7 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
         AssetsRecord * ar;
         for (NSDictionary* dictionary in jsonDic) {
             ar = [[[AssetsRecord alloc] init] autorelease];
-            if(![[dictionary objectForKey:@"assetsId"] isEqual:[NSNull null]]){
+            if (![[dictionary objectForKey:@"assetsId"] isEqual:[NSNull null]]){
                 ar.assetsId = [[dictionary objectForKey:@"assetsId"] integerValue];
             }
             else{
@@ -35,16 +35,16 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
             else{
                 ar.baseId = 0;
             }
-            if ([[dictionary objectForKey:@"baseCode"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"baseCode"] isEqual:[NSNull null]]) {
                 ar.baseCode = [dictionary objectForKey:@"baseCode"];
             }
-            if ([[dictionary objectForKey:@"typeCode"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"typeCode"] isEqual:[NSNull null]]) {
                 ar.typeCode = [dictionary objectForKey:@"typeCode"];
             }
-            if ([[dictionary objectForKey:@"baseCode"] isEqual:[NSNull null]]) {
-                ar.barcode = [dictionary objectForKey:@"baseCode"];
+            if (![[dictionary objectForKey:@"barcode"] isEqual:[NSNull null]]) {
+                ar.barcode = [dictionary objectForKey:@"barcode"];
             }
-            if ([[dictionary objectForKey:@"assetsCode"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"assetsCode"] isEqual:[NSNull null]]) {
                 ar.assetsCode = [dictionary objectForKey:@"assetsCode"];
             }
             if (![[dictionary objectForKey:@"name"] isEqual:[NSNull null]]) {
@@ -54,13 +54,13 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
                 ar.name = @"没有名称";
             }
             ar.pinyin = [dictionary objectForKey:@"pinyin"];
-            if ([[dictionary objectForKey:@"position"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"position"] isEqual:[NSNull null]]) {
                 ar.position = [dictionary objectForKey:@"position"];
             }
-            if ([[dictionary objectForKey:@"assetsOwners"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"assetsOwners"] isEqual:[NSNull null]]) {
                 ar.assetsOwners = [dictionary objectForKey:@"assetsOwners"];
             }
-            if ([[dictionary objectForKey:@"status"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"status"] isEqual:[NSNull null]]) {
                 ar.status = [dictionary objectForKey:@"status"];
             }
             if (![[dictionary objectForKey:@"useStatus"] isEqual:[NSNull null]]) {
@@ -69,13 +69,16 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
             else{
                 ar.useStatus = 0;
             }
-            if ([[dictionary objectForKey:@"startTimeStr"] isEqual:[NSNull null]]) {
+            if (![[dictionary objectForKey:@"startTimeStr"] isEqual:[NSNull null]]) {
                 ar.startTimeStr = [dictionary objectForKey:@"startTimeStr"];
+            }
+            else {
+                ar.startTimeStr = @"";
             }
             if (![[dictionary objectForKey:@"valid"] isEqual:[NSNull null]]) {
                 ar.valid = [dictionary objectForKey:@"valid"];
             }
-            if(![[dictionary objectForKey:@"isChange"] isEqual:[NSNull null]]){
+            if (![[dictionary objectForKey:@"isChange"] isEqual:[NSNull null]]){
                 ar.isChange = [[dictionary objectForKey:@"isChange"] integerValue];
             }
             else{
@@ -107,6 +110,9 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
             }
             if (![[dictionary objectForKey:@"assetsTypeCode"] isEqual:[NSNull null]]) {
                 ar.assetsTypeCode = [dictionary objectForKey:@"assetsTypeCode"];
+            }
+            if (![[dictionary objectForKey:@"assetsTypeName"] isEqual:[NSNull null]]) {
+                ar.assetsTypeName = [dictionary objectForKey:@"assetsTypeName"];
             }
             if (![[dictionary objectForKey:@"positionName"] isEqual:[NSNull null]]) {
                 ar.positionName = [dictionary objectForKey:@"positionName"];

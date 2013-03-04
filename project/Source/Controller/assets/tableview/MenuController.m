@@ -2,13 +2,16 @@
 #import "AssetsSearchDataSource.h"
 #import "AssetsRecord.h"
 #import "CustomDaragRefresh.h"
+#import "AppDelegate.h"
+#import "AssetsTypeTop.h"
 
 static NSString * AssetsSearchString = @"{1:1%@}";
 static NSString * AssetsStoreString = @"{position:4%@}";
 static NSString * AssetsSiteString = @"{position:1%@}";
 static NSString * AssetsRoomString = @"{position:3%@}";
+static NSString * AssetsCarString = @"{position:2%@}";
 static NSString * AssetsDropString = @"{useStatus:0%@}";
-
+static NSInteger DATATABLETAG = -5;
 @implementation MenuController
 @synthesize page = _page,savedSearchTerm;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,17 +20,19 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
 - (NSString*)nameForMenuPage:(MenuPage)page {
   switch (page) {
     case MenuPageAssetsSearch:
-      return @"全部资产";
+          return @"全部资产";
     case MenuPageAssetsStore:
-      return @"库存资产";
+          return @"库存资产";
     case MenuPageAssetsSite:
-      return @"基站资产";
+          return @"基站资产";
     case MenuPageAssetsRoom:
-      return @"机房资产";
+          return @"机房资产";
+    case MenuPageAssetsCar:
+          return @"移动基站";
     case MenuPageAssetsDrop:
-      return @"报废资产";
+          return @"报废资产";
     default:
-      return @"";
+          return @"";
   }
 }
 
@@ -41,6 +46,8 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
             return @"icon_copy.png";
         case MenuPageAssetsRoom:
             return @"icon_star.png";
+        case MenuPageAssetsCar:
+            return @"icon_time.png";
         case MenuPageAssetsDrop:
             return @"icon_time.png";
         default:
@@ -100,41 +107,16 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
     [[[UIBarButtonItem alloc] initWithTitle:@"返回主页面" style:UIBarButtonItemStyleBordered
                                      target:@"tt://main"
                                      action:@selector(openURLFromButton:)] autorelease];
-}
-
-- (void)setRightBarButtonItem
-{
-    switch (_page) {
-        case MenuPageAssetsSearch:
-            
-            return;
-        case MenuPageAssetsStore:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"资产入库" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/2"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        case MenuPageAssetsSite:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/3"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        case MenuPageAssetsRoom:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/4"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        case MenuPageAssetsDrop:
-            self.navigationItem.rightBarButtonItem =
-            [[[UIBarButtonItem alloc] initWithTitle:@"新增资产" style:UIBarButtonItemStyleBordered
-                                             target:@"tt://assetsRecordPage/5"
-                                             action:@selector(openURLFromButton:)] autorelease];
-            return;
-        default:
-            return;
-    }
+    
+    _dataAlertView = [[UIAlertView alloc] initWithTitle: @"请选择"
+                                               message: @"\n\n\n\n\n\n\n\n\n\n\n"
+                                              delegate: nil
+                                     cancelButtonTitle: @"取消"
+                                      otherButtonTitles: nil];
+    _dataTableView = [[UITableView alloc] initWithFrame: CGRectMake(15, 50, 255, 225)];
+    _dataTableView.delegate = self;
+    _dataTableView.dataSource = self;
+    _dataTableView.tag = DATATABLETAG;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,6 +148,9 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
     else if (_page == MenuPageAssetsRoom) {
         self.dataSource = [[[AssetsSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:AssetsRoomString,@""]] autorelease];
     }
+    else if (_page == MenuPageAssetsCar) {
+        self.dataSource = [[[AssetsSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:AssetsCarString,@""]] autorelease];
+    }
     else if (_page == MenuPageAssetsDrop) {
         self.dataSource = [[[AssetsSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:AssetsDropString,@""]] autorelease];
     }
@@ -192,13 +177,53 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
     }
 }
 
+#pragma mark - Table view data source
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (tableView.tag == DATATABLETAG) {
+        return [_dataListContent count];
+    }
+    return [tableView numberOfRowsInSection:section];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView.tag == DATATABLETAG) {
+        static NSString *CellIdentifier = @"Cell";
+        
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+        AssetsTypeTop *att;
+        att = [_dataListContent objectAtIndex:indexPath.row];
+        cell.textLabel.text = att.assetsTypeName;
+        return cell;
+    }
+    else {
+        return  [tableView cellForRowAtIndexPath:indexPath];
+    }
+}
+
+#pragma mark - Table view delegate
 /**
  * 点击查询结果框cell的响应
  */
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    TTTableViewCell *cell = (TTTableViewCell *) [tableView cellForRowAtIndexPath:indexPath];
-    TTTableItem *object = [cell object];
-    [self didSelectObject:object atIndexPath:indexPath];
+    if (tableView.tag == DATATABLETAG) {
+        AssetsTypeTop *att;
+        att = [_dataListContent objectAtIndex:indexPath.row];
+        [self.searchDisplayController.searchBar setText:att.assetsTypeName];
+        _searchTypeCode = att.assetsTypeCode;
+        NSUInteger cancelButtonIndex = _dataAlertView.cancelButtonIndex;
+        [_dataAlertView dismissWithClickedButtonIndex: cancelButtonIndex animated: YES];
+    }
+    else {
+        TTTableViewCell *cell = (TTTableViewCell *) [tableView cellForRowAtIndexPath:indexPath];
+        TTTableItem *object = [cell object];
+        [self didSelectObject:object atIndexPath:indexPath];
+    }
 }
 
 - (NSString *) getSearchString:(NSString*)searchString
@@ -212,6 +237,8 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
             return [NSString stringWithFormat:AssetsSiteString,searchString];
         case MenuPageAssetsRoom:
             return [NSString stringWithFormat:AssetsRoomString,searchString];
+        case MenuPageAssetsCar:
+            return [NSString stringWithFormat:AssetsCarString,searchString];
         case MenuPageAssetsDrop:
             return [NSString stringWithFormat:AssetsDropString,searchString];
         default:
@@ -238,7 +265,7 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
         }
         else if([scope isEqualToString:@"资产类型"])
         {
-            searchString = [self getSearchString:[NSString stringWithFormat:@",assetsTypeCode:%@",searchText]];
+            searchString = [self getSearchString:[NSString stringWithFormat:@",assetsTypeCode:%@",_searchTypeCode]];
         }
         else        //资产名称
         {
@@ -282,9 +309,16 @@ static NSString * AssetsDropString = @"{useStatus:0%@}";
  */
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
 {
+    //_searchTypeCode = nil;
     [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
      [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
-    
+    if([[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption] isEqualToString:@"资产类型"]){
+        AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+        _dataListContent = [[NSMutableArray alloc] initWithArray:delegate.assetsTypeTopList];
+        [_dataTableView reloadData];
+        [_dataAlertView addSubview: _dataTableView];
+        [_dataAlertView show];
+    }
     // Return YES to cause the search result table view to be reloaded.
     return YES;
 }

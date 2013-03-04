@@ -1,17 +1,13 @@
 #import <Three20/Three20.h>
-
-typedef enum {
-  MenuPageNone,
-  MenuPageAssetsSearch,
-  MenuPageAssetsStore,
-  MenuPageAssetsSite,
-  MenuPageAssetsRoom,
-  MenuPageAssetsDrop,
-} MenuPage;
+#import "CommonEnum.h"
 
 @interface MenuController : TTTableViewController<UISearchDisplayDelegate, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate> {
     MenuPage        _page;
     NSString		*savedSearchTerm;
+    UIAlertView     *_dataAlertView;
+    NSMutableArray  *_dataListContent;
+    UITableView     *_dataTableView;
+    NSString        *_searchTypeCode;
 }
 
 @property(nonatomic) MenuPage page;

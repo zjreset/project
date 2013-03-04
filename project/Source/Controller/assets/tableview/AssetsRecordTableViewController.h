@@ -7,8 +7,16 @@
 //
 
 #import <Three20UI/Three20UI.h>
+#import "CommonEnum.h"
+#import "EntityBase.h"
+#import "AssetsTypeTop.h"
 
 @interface AssetsRecordTableViewController : TTTableViewController
+{
+    
+    MenuPage            _page;
+    EntityBase          *_entityBase;
+    AssetsTypeTop       *_assetsTypeTop;
+}
 
-- (id)initWithURLQuery:(NSString*)query ;
 @end

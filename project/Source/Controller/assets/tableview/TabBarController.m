@@ -11,6 +11,7 @@
                                              @"tt://menu/3",
                                              @"tt://menu/4",
                                              @"tt://menu/5",
+                                             @"tt://menu/6",
                                              nil]];
 }
 

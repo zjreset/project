@@ -19,17 +19,19 @@
 		840B439A16C10AFA009397A8 /* TableCustomSubtitleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B439916C10AFA009397A8 /* TableCustomSubtitleItem.m */; };
 		840B691516BA4C25006670C3 /* MyStyleSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B691416BA4C25006670C3 /* MyStyleSheet.m */; };
 		840B692516BA57D3006670C3 /* EntityBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B692416BA57D3006670C3 /* EntityBase.m */; };
-		840B693416BB6EFC006670C3 /* EntityBaseGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B692B16BB6EFC006670C3 /* EntityBaseGridViewController.m */; };
-		840B693516BB6EFC006670C3 /* EntityBaseMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B692D16BB6EFC006670C3 /* EntityBaseMenuController.m */; };
-		840B693616BB6EFC006670C3 /* EntityBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B692F16BB6EFC006670C3 /* EntityBaseModel.m */; };
-		840B693716BB6EFC006670C3 /* EntityBaseSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B693116BB6EFC006670C3 /* EntityBaseSearchDataSource.m */; };
-		840B693816BB6EFC006670C3 /* EntityBaseTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B693316BB6EFC006670C3 /* EntityBaseTabBarController.m */; };
 		840B693B16BB7511006670C3 /* AssetsTypeTop.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B693A16BB7511006670C3 /* AssetsTypeTop.m */; };
 		84107C9E16ACD59A00924B07 /* AssetsRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 84107C9D16ACD59A00924B07 /* AssetsRecord.m */; };
 		841C56F516BF52740003E83F /* EncoderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C56F416BF52740003E83F /* EncoderViewController.m */; };
 		841C56FB16BF597D0003E83F /* DecoderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 841C56FA16BF597D0003E83F /* DecoderViewController.m */; };
 		841C570016BF66800003E83F /* libQREncoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 841C56FD16BF66800003E83F /* libQREncoder.a */; };
 		842589D616DCBDFB00669EE6 /* CAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 842589D516DCBDFB00669EE6 /* CAlertView.m */; };
+		8429928216E0ACBD00AAD430 /* TitleValueLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429928116E0ACBD00AAD430 /* TitleValueLabelView.m */; };
+		8429928716E1E69400AAD430 /* EntityBaseGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429928516E1E69400AAD430 /* EntityBaseGridViewController.m */; };
+		8429929016E1E72200AAD430 /* EntityBaseMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429928916E1E72200AAD430 /* EntityBaseMenuController.m */; };
+		8429929116E1E72200AAD430 /* EntityBaseModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429928B16E1E72200AAD430 /* EntityBaseModel.m */; };
+		8429929216E1E72200AAD430 /* EntityBaseSearchDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429928D16E1E72200AAD430 /* EntityBaseSearchDataSource.m */; };
+		8429929316E1E72200AAD430 /* EntityBaseTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429928F16E1E72200AAD430 /* EntityBaseTabBarController.m */; };
+		8429929716E1EB7900AAD430 /* CommonEnum.m in Sources */ = {isa = PBXBuildFile; fileRef = 8429929616E1EB7900AAD430 /* CommonEnum.m */; };
 		842B47A016C23BC900790A31 /* AssetsProp.m in Sources */ = {isa = PBXBuildFile; fileRef = 842B479F16C23BC900790A31 /* AssetsProp.m */; };
 		843460B116D7615A0045C5F7 /* AssetsType.m in Sources */ = {isa = PBXBuildFile; fileRef = 843460B016D7615A0045C5F7 /* AssetsType.m */; };
 		8441D1B816AFC3EE00830515 /* AutoAdaptedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8441D1B716AFC3EE00830515 /* AutoAdaptedView.m */; };
@@ -357,16 +359,6 @@
 		840B691416BA4C25006670C3 /* MyStyleSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyStyleSheet.m; sourceTree = "<group>"; };
 		840B692316BA57D3006670C3 /* EntityBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBase.h; sourceTree = "<group>"; };
 		840B692416BA57D3006670C3 /* EntityBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBase.m; sourceTree = "<group>"; };
-		840B692A16BB6EFC006670C3 /* EntityBaseGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseGridViewController.h; sourceTree = "<group>"; };
-		840B692B16BB6EFC006670C3 /* EntityBaseGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseGridViewController.m; sourceTree = "<group>"; };
-		840B692C16BB6EFC006670C3 /* EntityBaseMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseMenuController.h; sourceTree = "<group>"; };
-		840B692D16BB6EFC006670C3 /* EntityBaseMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseMenuController.m; sourceTree = "<group>"; };
-		840B692E16BB6EFC006670C3 /* EntityBaseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseModel.h; sourceTree = "<group>"; };
-		840B692F16BB6EFC006670C3 /* EntityBaseModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseModel.m; sourceTree = "<group>"; };
-		840B693016BB6EFC006670C3 /* EntityBaseSearchDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseSearchDataSource.h; sourceTree = "<group>"; };
-		840B693116BB6EFC006670C3 /* EntityBaseSearchDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseSearchDataSource.m; sourceTree = "<group>"; };
-		840B693216BB6EFC006670C3 /* EntityBaseTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseTabBarController.h; sourceTree = "<group>"; };
-		840B693316BB6EFC006670C3 /* EntityBaseTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseTabBarController.m; sourceTree = "<group>"; };
 		840B693916BB7511006670C3 /* AssetsTypeTop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetsTypeTop.h; sourceTree = "<group>"; };
 		840B693A16BB7511006670C3 /* AssetsTypeTop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AssetsTypeTop.m; sourceTree = "<group>"; };
 		84107C9C16ACD59A00924B07 /* AssetsRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetsRecord.h; sourceTree = "<group>"; };
@@ -400,6 +392,20 @@
 		841C56FF16BF66800003E83F /* QREncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QREncoder.h; sourceTree = "<group>"; };
 		842589D416DCBDFB00669EE6 /* CAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAlertView.h; sourceTree = "<group>"; };
 		842589D516DCBDFB00669EE6 /* CAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAlertView.m; sourceTree = "<group>"; };
+		8429928016E0ACBD00AAD430 /* TitleValueLabelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TitleValueLabelView.h; sourceTree = "<group>"; };
+		8429928116E0ACBD00AAD430 /* TitleValueLabelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TitleValueLabelView.m; sourceTree = "<group>"; };
+		8429928416E1E69400AAD430 /* EntityBaseGridViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseGridViewController.h; sourceTree = "<group>"; };
+		8429928516E1E69400AAD430 /* EntityBaseGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseGridViewController.m; sourceTree = "<group>"; };
+		8429928816E1E72200AAD430 /* EntityBaseMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseMenuController.h; sourceTree = "<group>"; };
+		8429928916E1E72200AAD430 /* EntityBaseMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseMenuController.m; sourceTree = "<group>"; };
+		8429928A16E1E72200AAD430 /* EntityBaseModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseModel.h; sourceTree = "<group>"; };
+		8429928B16E1E72200AAD430 /* EntityBaseModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseModel.m; sourceTree = "<group>"; };
+		8429928C16E1E72200AAD430 /* EntityBaseSearchDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseSearchDataSource.h; sourceTree = "<group>"; };
+		8429928D16E1E72200AAD430 /* EntityBaseSearchDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseSearchDataSource.m; sourceTree = "<group>"; };
+		8429928E16E1E72200AAD430 /* EntityBaseTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityBaseTabBarController.h; sourceTree = "<group>"; };
+		8429928F16E1E72200AAD430 /* EntityBaseTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityBaseTabBarController.m; sourceTree = "<group>"; };
+		8429929516E1EB7900AAD430 /* CommonEnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonEnum.h; sourceTree = "<group>"; };
+		8429929616E1EB7900AAD430 /* CommonEnum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonEnum.m; sourceTree = "<group>"; };
 		842B479E16C23BC900790A31 /* AssetsProp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetsProp.h; sourceTree = "<group>"; };
 		842B479F16C23BC900790A31 /* AssetsProp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AssetsProp.m; sourceTree = "<group>"; };
 		843460AF16D7615A0045C5F7 /* AssetsType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetsType.h; sourceTree = "<group>"; };
@@ -622,26 +628,11 @@
 			path = StyleSheet;
 			sourceTree = "<group>";
 		};
-		840B692916BB6EFC006670C3 /* entitybase */ = {
-			isa = PBXGroup;
-			children = (
-				840B692A16BB6EFC006670C3 /* EntityBaseGridViewController.h */,
-				840B692B16BB6EFC006670C3 /* EntityBaseGridViewController.m */,
-				840B692C16BB6EFC006670C3 /* EntityBaseMenuController.h */,
-				840B692D16BB6EFC006670C3 /* EntityBaseMenuController.m */,
-				840B692E16BB6EFC006670C3 /* EntityBaseModel.h */,
-				840B692F16BB6EFC006670C3 /* EntityBaseModel.m */,
-				840B693016BB6EFC006670C3 /* EntityBaseSearchDataSource.h */,
-				840B693116BB6EFC006670C3 /* EntityBaseSearchDataSource.m */,
-				840B693216BB6EFC006670C3 /* EntityBaseTabBarController.h */,
-				840B693316BB6EFC006670C3 /* EntityBaseTabBarController.m */,
-			);
-			path = entitybase;
-			sourceTree = "<group>";
-		};
 		84107C7A16ACCF3500924B07 /* assets */ = {
 			isa = PBXGroup;
 			children = (
+				8429928316E1E69300AAD430 /* entitybase */,
+				8429928616E1E69400AAD430 /* Menu */,
 				847BE2D316B91EBC001B70CB /* tableview */,
 			);
 			path = assets;
@@ -752,9 +743,43 @@
 			path = main;
 			sourceTree = "<group>";
 		};
+		8429928316E1E69300AAD430 /* entitybase */ = {
+			isa = PBXGroup;
+			children = (
+				8429928816E1E72200AAD430 /* EntityBaseMenuController.h */,
+				8429928916E1E72200AAD430 /* EntityBaseMenuController.m */,
+				8429928A16E1E72200AAD430 /* EntityBaseModel.h */,
+				8429928B16E1E72200AAD430 /* EntityBaseModel.m */,
+				8429928C16E1E72200AAD430 /* EntityBaseSearchDataSource.h */,
+				8429928D16E1E72200AAD430 /* EntityBaseSearchDataSource.m */,
+				8429928E16E1E72200AAD430 /* EntityBaseTabBarController.h */,
+				8429928F16E1E72200AAD430 /* EntityBaseTabBarController.m */,
+				8429928416E1E69400AAD430 /* EntityBaseGridViewController.h */,
+				8429928516E1E69400AAD430 /* EntityBaseGridViewController.m */,
+			);
+			path = entitybase;
+			sourceTree = "<group>";
+		};
+		8429928616E1E69400AAD430 /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
+		8429929416E1EB4D00AAD430 /* enum */ = {
+			isa = PBXGroup;
+			children = (
+				8429929516E1EB7900AAD430 /* CommonEnum.h */,
+				8429929616E1EB7900AAD430 /* CommonEnum.m */,
+			);
+			path = enum;
+			sourceTree = "<group>";
+		};
 		84322C8E167C342100284298 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				8429929416E1EB4D00AAD430 /* enum */,
 				841C56F616BF58F50003E83F /* lib */,
 				847BE2C716B91AC3001B70CB /* View */,
 				84107C9B16ACD58D00924B07 /* Model */,
@@ -770,7 +795,6 @@
 			isa = PBXGroup;
 			children = (
 				841C56F216BF52540003E83F /* coder */,
-				840B692916BB6EFC006670C3 /* entitybase */,
 				84107C7A16ACCF3500924B07 /* assets */,
 				84263AF516A78316003E4E52 /* main */,
 				847AE06D16A7D42E001D37D3 /* LoginViewController.h */,
@@ -786,6 +810,8 @@
 				84726CC416D5C34100B56E1A /* RadioButton.m */,
 				8441D1B616AFC3EE00830515 /* AutoAdaptedView.h */,
 				8441D1B716AFC3EE00830515 /* AutoAdaptedView.m */,
+				8429928016E0ACBD00AAD430 /* TitleValueLabelView.h */,
+				8429928116E0ACBD00AAD430 /* TitleValueLabelView.m */,
 			);
 			path = BaseView;
 			sourceTree = "<group>";
@@ -1474,11 +1500,6 @@
 				847BE2E516B91F07001B70CB /* TabBarController.m in Sources */,
 				840B691516BA4C25006670C3 /* MyStyleSheet.m in Sources */,
 				840B692516BA57D3006670C3 /* EntityBase.m in Sources */,
-				840B693416BB6EFC006670C3 /* EntityBaseGridViewController.m in Sources */,
-				840B693516BB6EFC006670C3 /* EntityBaseMenuController.m in Sources */,
-				840B693616BB6EFC006670C3 /* EntityBaseModel.m in Sources */,
-				840B693716BB6EFC006670C3 /* EntityBaseSearchDataSource.m in Sources */,
-				840B693816BB6EFC006670C3 /* EntityBaseTabBarController.m in Sources */,
 				840B693B16BB7511006670C3 /* AssetsTypeTop.m in Sources */,
 				84BE39FF16BD0A1F006B768A /* AssetsRecordTableViewController.m in Sources */,
 				841C56F516BF52740003E83F /* EncoderViewController.m in Sources */,
@@ -1490,6 +1511,13 @@
 				84726CC516D5C34100B56E1A /* RadioButton.m in Sources */,
 				843460B116D7615A0045C5F7 /* AssetsType.m in Sources */,
 				842589D616DCBDFB00669EE6 /* CAlertView.m in Sources */,
+				8429928216E0ACBD00AAD430 /* TitleValueLabelView.m in Sources */,
+				8429928716E1E69400AAD430 /* EntityBaseGridViewController.m in Sources */,
+				8429929016E1E72200AAD430 /* EntityBaseMenuController.m in Sources */,
+				8429929116E1E72200AAD430 /* EntityBaseModel.m in Sources */,
+				8429929216E1E72200AAD430 /* EntityBaseSearchDataSource.m in Sources */,
+				8429929316E1E72200AAD430 /* EntityBaseTabBarController.m in Sources */,
+				8429929716E1EB7900AAD430 /* CommonEnum.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

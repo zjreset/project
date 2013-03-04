@@ -10,37 +10,13 @@
 #import "AssetsRecord.h"
 #import "AutoAdaptedView.h"
 #import "CAlertView.h"
-
-typedef enum {
-    PageNone,
-    PageAssetsSearch,
-    PageAssetsStore,
-    PageAssetsSite,
-    PageAssetsRoom,
-    PageAssetsDrop,
-} PageTag;
-
-typedef enum {
-    FieldTagNone,
-    TypeCodeFieldTag,
-    UserFieldTag,
-    TypeValueFieldTag,
-    FactoryFieldTag,
-    ModelFieldTag
-}FieldTag;
-
-typedef enum {
-    AlertViewTagNone,
-    AlertViewTagIn,
-    AlertViewTagChange,
-    AlertViewTagOut,
-    AlertViewTagDrop
-}AlertViewTag;
+#import "TitleValueLabelView.h"
+#import "CommonEnum.h"
 
 @interface AssetsRecordViewController : TTViewController<UIAlertViewDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,CAlertViewDelegate>
 {
     AssetsRecord *_assetsRecord;
-    NSInteger _pageTag;
+    MenuPage _pageTag;
     NSInteger _editTag;
     TTButton *_rukuButton;
     AutoAdaptedView *_zichanName;           //资产名称
@@ -62,9 +38,32 @@ typedef enum {
     NSInteger       _fujiaIndex;            //附加字段的tag值
     NSInteger       _baseId;                //新增资产时的关联物理点编号
     NSString        *_baseType;             //新增资产时的类型
+    
+    NSInteger       _assetsIdNew;           //需要替换的资产ID
+    
+    AutoAdaptedView *_outStoreType;         //出库类型
+    AutoAdaptedView *_outStoreCode;         //项目编号
+    AutoAdaptedView *_storePerson;          //出库领用人,归还人
+    AutoAdaptedView *_storeMemo;            //出库备注,拆除备注,报废备注
+    AutoAdaptedView *_assetsCodeNew;        //替换的资产编号
+    AutoAdaptedView *_barcodeNew;           //替换的资产条码
+    
+    TitleValueLabelView *_zichanNameLabel;           //资产名称
+    TitleValueLabelView *_zichanTypeCodeLabel;       //资产类型
+    TitleValueLabelView *_zichanFactoryLabel;        //厂家
+    TitleValueLabelView *_zichanModelLabel;          //型号
+    TitleValueLabelView *_assetsOwnersLabel;         //资产所有者
+    TitleValueLabelView *_startTimeStrLabel;         //使用时间
+    TitleValueLabelView *_validLabel;                //报废年限
+    TitleValueLabelView *_statusLabel;               //性能状态
+    TitleValueLabelView *_remarkLabel;               //备注
+    TitleValueLabelView *_zichanLngLabel;            //经度
+    TitleValueLabelView *_zichanLatLabel;            //纬度
+    TitleValueLabelView *_respLabel;                 //责任人
 }
 @property (nonatomic,retain) UITableView *alertTableView;
 @property (nonatomic,retain) UIScrollView *alertScrollView;
 @property (nonatomic,retain) UIAlertView *dataAlertView;
+@property (nonatomic,retain) CAlertView *updateAlertView;
 @property (nonatomic,retain) NSMutableArray *alertListContent;
 @end

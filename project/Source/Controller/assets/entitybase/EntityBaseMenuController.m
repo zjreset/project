@@ -14,32 +14,32 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // private
 
-- (NSString*)nameForMenuPage:(EntityBaseMenuPage)page {
+- (NSString*)nameForMenuPage:(MenuPage)page {
   switch (page) {
-    case EntityBaseMenuPageAssetsSite:
+    case MenuPageAssetsSite:
       return @"基站";
-    case EntityBaseMenuPageAssetsStore:
+    case MenuPageAssetsStore:
       return @"库房";
-    case EntityBaseMenuPageAssetsRoom:
+    case MenuPageAssetsRoom:
       return @"中心机房";
-    case EntityBaseMenuPageAssetsCar:
+    case MenuPageAssetsCar:
       return @"移动基站";
     default:
       return @"";
   }
 }
 
-- (NSString*)imageForMenuPage:(EntityBaseMenuPage)page {
+- (NSString*)imageForMenuPage:(MenuPage)page {
     switch (page) {
-        case EntityBaseMenuPageAssetsSearch:
+        case MenuPageAssetsSearch:
             return @"icon_glass.png";
-        case EntityBaseMenuPageAssetsStore:
+        case MenuPageAssetsStore:
             return @"icon_home.png";
-        case EntityBaseMenuPageAssetsSite:
+        case MenuPageAssetsSite:
             return @"icon_copy.png";
-        case EntityBaseMenuPageAssetsRoom:
+        case MenuPageAssetsRoom:
             return @"icon_star.png";
-        case EntityBaseMenuPageAssetsCar:
+        case MenuPageAssetsCar:
             return @"icon_time.png";
         default:
             return @"";
@@ -49,7 +49,7 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // NSObject
 
-- (id)initWithMenu:(EntityBaseMenuPage)page {
+- (id)initWithMenu:(MenuPage)page {
     if (self = [super init]) {
         self.page = page;
     }
@@ -58,7 +58,7 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
 
 - (id)init {
     if (self = [super init]) {
-        _page = EntityBaseMenuPageNone;
+        _page = MenuPageNone;
     }
     return self;
 }
@@ -100,7 +100,7 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // TTViewController
 
-- (void)setPage:(EntityBaseMenuPage)page {
+- (void)setPage:(MenuPage)page {
     _page = page;
     //设置标题以及资源按钮
     self.title = [self nameForMenuPage:_page];
@@ -114,19 +114,19 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
  */
 -(void)createModel
 {
-    if (_page == EntityBaseMenuPageAssetsSearch) {
+    if (_page == MenuPageAssetsSearch) {
         self.dataSource = [[[EntityBaseSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:EntityBaseSearchString,@""]] autorelease];
     }
-    else if (_page == EntityBaseMenuPageAssetsStore) {
+    else if (_page == MenuPageAssetsStore) {
         self.dataSource = [[[EntityBaseSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:EntityBaseStoreString,@""]] autorelease];
     }
-    else if (_page == EntityBaseMenuPageAssetsSite) {
+    else if (_page == MenuPageAssetsSite) {
         self.dataSource = [[[EntityBaseSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:EntityBaseSiteString,@""]] autorelease];
     }
-    else if (_page == EntityBaseMenuPageAssetsRoom) {
+    else if (_page == MenuPageAssetsRoom) {
         self.dataSource = [[[EntityBaseSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:EntityBaseRoomString,@""]] autorelease];
     }
-    else if (_page == EntityBaseMenuPageAssetsCar) {
+    else if (_page == MenuPageAssetsCar) {
         self.dataSource = [[[EntityBaseSearchDataSource alloc] initWithURLQuery:[NSString stringWithFormat:EntityBaseCarString,@""]] autorelease];
     }
     
@@ -164,15 +164,15 @@ static NSString * EntityBaseCarString = @"&baseType=2%@";
 - (NSString *) getSearchString:(NSString*)searchString
 {
     switch (_page) {
-        case EntityBaseMenuPageAssetsSearch:
+        case MenuPageAssetsSearch:
             return [NSString stringWithFormat:EntityBaseSearchString,searchString];
-        case EntityBaseMenuPageAssetsStore:
+        case MenuPageAssetsStore:
             return [NSString stringWithFormat:EntityBaseStoreString,searchString];
-        case EntityBaseMenuPageAssetsSite:
+        case MenuPageAssetsSite:
             return [NSString stringWithFormat:EntityBaseSiteString,searchString];
-        case EntityBaseMenuPageAssetsRoom:
+        case MenuPageAssetsRoom:
             return [NSString stringWithFormat:EntityBaseRoomString,searchString];
-        case EntityBaseMenuPageAssetsCar:
+        case MenuPageAssetsCar:
             return [NSString stringWithFormat:EntityBaseCarString,searchString];
         default:
             return @"{}";

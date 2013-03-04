@@ -75,7 +75,7 @@
     //菜单页
     [map from:@"tt://menu/(initWithMenu:)" toSharedViewController:[MenuController class]];
     //资产查询详情
-    [map from:@"tt://assetsRecordTableViewQuery/(initWithURLQuery:)" toViewController:[AssetsRecordTableViewController class]];
+    [map from:@"tt://assetsRecordTableViewQuery?page=(initWithURLQuery:)" toViewController:[AssetsRecordTableViewController class]];
     //主TAB页
     [map from:@"tt://entityTabBar" toSharedViewController:[EntityBaseTabBarController class]];
     //菜单页

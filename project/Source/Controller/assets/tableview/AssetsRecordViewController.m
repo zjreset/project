@@ -19,12 +19,13 @@
 @interface AssetsRecordViewController ()
 
 @end
-static int LOGINTAG = -1;       //需要退回到登陆状态的TAG标志
+static int LOGINTAG = -1;           //需要退回到登陆状态的TAG标志
+static int OPERATIONTAG = -2;       //资产操作TAG标志
 static int INPUTHEIGHT = 30;
 static int _X = 10;
 static int _P = 10;
 @implementation AssetsRecordViewController
-@synthesize alertTableView,dataAlertView,alertListContent,alertScrollView;
+@synthesize alertTableView,dataAlertView,alertListContent,alertScrollView,updateAlertView;
 
 - (id)initWithNavigatorURL:(NSURL *)URL query:(NSDictionary *)query
 {
@@ -36,7 +37,7 @@ static int _P = 10;
     return self;
 }
 
-- (id)initWithPageTag:(PageTag)pageTag query:(NSDictionary*)query
+- (id)initWithPageTag:(MenuPage)pageTag query:(NSDictionary*)query
 {
     self = [super init];
     if (self) {
@@ -52,19 +53,22 @@ static int _P = 10;
 {
     [super viewDidLoad];
     switch (_pageTag) {
-        case 1:
+        case MenuPageAssetsSearch:
             NSLog(@"search");
             break;
-        case 2:
+        case MenuPageAssetsStore:
             NSLog(@"store");
             break;
-        case 3:
+        case MenuPageAssetsSite:
             NSLog(@"site");
             break;
-        case 4:
+        case MenuPageAssetsRoom:
             NSLog(@"room");
             break;
-        case 5:
+        case MenuPageAssetsCar:
+            NSLog(@"car");
+            break;
+        case MenuPageAssetsDrop:
             NSLog(@"drop");
             break;
         default:
@@ -80,34 +84,48 @@ static int _P = 10;
     NSMutableArray *toolbarArray = [[[NSMutableArray alloc] init] autorelease];
     
     if (_assetsRecord.useStatus) {      //主要区分已经废弃的资产
-        NSString *outTitle = @"出库";
         UIBarButtonItem *changeButton;
         int position = 0;
         if (![_assetsRecord.position isKindOfClass:[NSNull class]]) {
             position = _assetsRecord.position.intValue;
         }
-        switch (position) {     //区分仓库与其他驻地资产
-            case 4:
-                NSLog(@"search");
-                outTitle = @"出库";
-                break;
-            default:
-                NSLog(@"edit");
-                outTitle = @"拆除";
-                changeButton = [[[UIBarButtonItem alloc] initWithTitle:@"替换" style:UIBarButtonItemStyleBordered
-                                                                target:self
-                                                                action:@selector(changeStore)] autorelease];
-                [toolbarArray addObject:changeButton];
-                break;
+        if (position == 4) {     //区分仓库与其他驻地资产
+            //归还
+//            UIBarButtonItem *returnButton = [[[UIBarButtonItem alloc] initWithTitle:@"归还" style:UIBarButtonItemStyleBordered
+//                                                                             target:self
+//                                                                             action:@selector(returnStore)] autorelease];
+//            [toolbarArray addObject:returnButton];
+            
+            //出库
+            UIBarButtonItem *outHouseButton = [[[UIBarButtonItem alloc] initWithTitle:@"出库" style:UIBarButtonItemStyleBordered
+                                                                               target:self
+                                                                               action:@selector(outStore)] autorelease];
+            [toolbarArray addObject:outHouseButton];
+            
+            //报废
+            UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithTitle:@"报废" style:UIBarButtonItemStyleBordered
+                                                                             target:self
+                                                                             action:@selector(dropStore)] autorelease];
+            [toolbarArray addObject:deleteButton];
         }
-        UIBarButtonItem *outButton = [[[UIBarButtonItem alloc] initWithTitle:outTitle style:UIBarButtonItemStyleBordered
-                                                                      target:self
-                                                                      action:@selector(outStore)] autorelease];
-        [toolbarArray addObject:outButton];
-        UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithTitle:@"报废" style:UIBarButtonItemStyleBordered
-                                                                         target:self
-                                                                         action:@selector(dropStore)] autorelease];
-        [toolbarArray addObject:deleteButton];
+        else {
+            //接入
+//            UIBarButtonItem *inButton = [[[UIBarButtonItem alloc] initWithTitle:@"接入" style:UIBarButtonItemStyleBordered
+//                                                                             target:self
+//                                                                             action:@selector(inStore)] autorelease];
+//            [toolbarArray addObject:inButton];
+            
+            changeButton = [[[UIBarButtonItem alloc] initWithTitle:@"替换" style:UIBarButtonItemStyleBordered
+                                                            target:self
+                                                            action:@selector(changeStore)] autorelease];
+            [toolbarArray addObject:changeButton];
+            
+            //出库
+            UIBarButtonItem *outButton = [[[UIBarButtonItem alloc] initWithTitle:@"拆除" style:UIBarButtonItemStyleBordered
+                                                                          target:self
+                                                                          action:@selector(outOtherStore)] autorelease];
+            [toolbarArray addObject:outButton];
+        }
     }
     
     self.toolbarItems = toolbarArray;
@@ -133,7 +151,7 @@ static int _P = 10;
     [scrollView addSubview:_zichanName];
     y = y + _zichanName.frame.size.height + 2*_P;
     
-	_zichanTypeCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产类型:" inputType:@"select" inputText:_assetsRecord.typeName inputValue:_assetsRecord.typeCode valueTypeDicCode:nil];
+	_zichanTypeCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, self.view.frame.size.width, INPUTHEIGHT) title:@"资产类型:" inputType:@"select" inputText:_assetsRecord.assetsTypeName inputValue:_assetsRecord.assetsTypeCode valueTypeDicCode:nil];
     _zichanTypeCode.textField.delegate = self;
     if (_editTag) {
         _zichanTypeCode.textField.enabled = false;
@@ -334,9 +352,6 @@ static int _P = 10;
             assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",model:'%@'",_zichanModel.textValue];
         }
     }
-    if (_zichanTypeCode.textValue != nil && ![_zichanTypeCode.textValue isKindOfClass:[NSNull class]]) {
-        assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",typeCode:'%@'",_zichanTypeCode.textValue];
-    }
     if (_assetsCode.textField.text != nil && ![_assetsCode.textField.text isKindOfClass:[NSNull class]]) {
         assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",assetsCode:'%@'",_assetsCode.textField.text];
     }
@@ -481,6 +496,12 @@ static int _P = 10;
             [alert show];
             [alert release];
         }
+        else if (request.userInfo != nil && [request.userInfo compare:@"saveOperation" options:comparisonOptions] == NSOrderedSame) {
+            UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"保存成功!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            alert.tag = OPERATIONTAG;
+            [alert show];
+            [alert release];
+        }
     }
 }
 
@@ -512,19 +533,152 @@ static int _P = 10;
 //报废资产
 - (void)dropStore
 {
-    UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"资产报废!" message:@"\n\n\n\n\n\n\n\n\n\n\n" delegate:self cancelButtonTitle:@"取消" otherButtonTitles: @"确定", nil];
-    alert.tag = AlertViewTagDrop;
+    UIScrollView* scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
+    [scrollView setBackgroundColor:[UIColor whiteColor]];
     
-    [alert show];
-    //释放
-    [alert release];
+    int y = 0;
+    UILabel *titleLabel;
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _P, scrollView.frame.size.width, 30)];
+    titleLabel.text = @"资产报废";
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [scrollView addSubview:titleLabel];
+    y = y + 40 +2*_P;
+    
+    _storeMemo = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"报废说明:" inputType:@"textarea" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _storeMemo.textField.delegate = self;
+    _storeMemo.frame = CGRectMake(_X, y, scrollView.frame.size.width, _storeMemo.viewHeight);
+    [scrollView addSubview:_storeMemo];
+    y = y + _storeMemo.height +2*_P;
+    
+    UIButton* submitbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [submitbutton setBackgroundColor:[UIColor grayColor]];
+    [submitbutton setFrame:CGRectMake(scrollView.width/2-90, y, 80, 30)];
+    [submitbutton setTitle:@"确定" forState:UIControlStateNormal];
+    [submitbutton addTarget:self action:@selector(submitOperation:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:submitbutton];
+    
+    UIButton* cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelbutton setBackgroundColor:[UIColor grayColor]];
+    [cancelbutton setFrame:CGRectMake(scrollView.width/2+10, y, 80, 30)];
+    [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelbutton addTarget:self action:@selector(updateAlertViewDismiss:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:cancelbutton];
+    
+    UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
+    [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
+    [scrollView addSubview:_back];
+    _back.frame = CGRectMake(0, 0, scrollView.frame.size.width, y);
+    [_back release];
+    [scrollView sendSubviewToBack:_back];
+    
+    updateAlertView = [[CAlertView alloc] initWithView:scrollView];
+    updateAlertView.delegate = self;
+    updateAlertView.tag = AlertViewTagDrop;
+    [scrollView release];
+    [updateAlertView show];
 }
 
 //资产替换
 - (void)changeStore
 {
-    UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"资产替换!" message:@"\n\n\n\n\n\n\n\n\n\n\n" delegate:self cancelButtonTitle:@"取消" otherButtonTitles: @"确定", nil];
-    alert.tag = AlertViewTagChange;
+    UIScrollView* scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
+    [scrollView setBackgroundColor:[UIColor whiteColor]];
+    
+    int y = 0;
+    UILabel *titleLabel;
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _P, scrollView.frame.size.width, 30)];
+    titleLabel.text = @"资产替换";
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [scrollView addSubview:titleLabel];
+    y = y + 40 +2*_P;
+    
+	_assetsCodeNew = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"资产编码:" inputType:@"input" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _assetsCodeNew.textField.delegate = self;
+    [scrollView addSubview:_assetsCodeNew];
+    y = y + _assetsCodeNew.height + 2*_P;
+    
+	_barcodeNew = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"资产条码:" inputType:@"input" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _barcodeNew.textField.delegate = self;
+    [scrollView addSubview:_barcodeNew];
+    y = y + _barcodeNew.height + 2*_P;
+    
+    _zichanNameLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"资产名称:" labelValue:nil];
+    [scrollView addSubview:_zichanNameLabel];
+    y = y + _zichanNameLabel.frame.size.height + 2*_P;
+    
+	_zichanTypeCodeLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"资产类型:" labelValue:nil];
+    [scrollView addSubview:_zichanTypeCodeLabel];
+    y = y + _zichanTypeCodeLabel.frame.size.height + 2*_P;
+    
+	_zichanFactoryLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"厂家:" labelValue:nil];
+    [scrollView addSubview:_zichanFactoryLabel];
+    y = y + _zichanFactoryLabel.frame.size.height + 2*_P;
+    
+	_zichanModelLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"型号:" labelValue:nil];
+    [scrollView addSubview:_zichanModelLabel];
+    y = y + _zichanModelLabel.frame.size.height + 2*_P;
+    
+//	_assetsOwnersLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"资产所有权:" labelValue:nil];
+//    [scrollView addSubview:_assetsOwnersLabel];
+//    y = y + _assetsOwnersLabel.frame.size.height + 2*_P;
+//    
+//	_startTimeStrLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"使用时间:" labelValue:nil];
+//    [scrollView addSubview:_startTimeStrLabel];
+//    y = y + _startTimeStrLabel.frame.size.height + 2*_P;
+//    
+//	_validLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"报废年限(年):" labelValue:nil];
+//    [scrollView addSubview:_validLabel];
+//    y = y + _validLabel.frame.size.height + 2*_P;
+//    
+//	_statusLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"性能状态:" labelValue:nil];
+//    [scrollView addSubview:_statusLabel];
+//    y = y + _statusLabel.frame.size.height + 2*_P;
+//    
+//	_zichanLngLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"经度:" labelValue:nil];
+//    [scrollView addSubview:_zichanLngLabel];
+//    y = y + _zichanLngLabel.frame.size.height + 2*_P;
+//    
+//	_zichanLatLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"纬度:" labelValue:nil];
+//    [scrollView addSubview:_zichanLatLabel];
+//    y = y + _zichanLatLabel.frame.size.height + 2*_P;
+//    
+//	_respLabel = [[TitleValueLabelView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) labelTitle:@"责任人:" labelValue:nil];
+//    [scrollView addSubview:_respLabel];
+//    y = y + _respLabel.frame.size.height + 2*_P;
+    
+    UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
+    [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
+    [scrollView addSubview:_back];
+    _back.frame = CGRectMake(0, 0, scrollView.frame.size.width, y);
+    [_back release];
+    [scrollView sendSubviewToBack:_back];
+    
+    UIButton* submitbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [submitbutton setBackgroundColor:[UIColor grayColor]];
+    [submitbutton setFrame:CGRectMake(scrollView.width/2-90, 360, 80, 30)];
+    [submitbutton setTitle:@"确定" forState:UIControlStateNormal];
+    [submitbutton addTarget:self action:@selector(submitOperation:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:submitbutton];
+    
+    UIButton* cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelbutton setBackgroundColor:[UIColor grayColor]];
+    [cancelbutton setFrame:CGRectMake(scrollView.width/2+10, 360, 80, 30)];
+    [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelbutton addTarget:self action:@selector(updateAlertViewDismiss:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:cancelbutton];
+    
+    updateAlertView = [[CAlertView alloc] initWithView:scrollView];
+    updateAlertView.delegate = self;
+    updateAlertView.tag = AlertViewTagChange;
+    [updateAlertView show];
+    [scrollView release];
+}
+
+//资产归还
+- (void)returnStore
+{
+    UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"资产归还!" message:@"\n\n\n\n\n\n\n\n\n\n\n" delegate:self cancelButtonTitle:@"取消" otherButtonTitles: @"确定", nil];
+    alert.tag = AlertViewTagReturnHouse;
     
     [alert addSubview: alertScrollView];
     [alert show];
@@ -532,87 +686,262 @@ static int _P = 10;
     [alert release];
 }
 
-//出库,拆除资产
-- (void)outStore
+//资产加入
+- (void)inStore
 {
-    CAlertView * alert;
-    int position;
-    if (![_assetsRecord.position isKindOfClass:[NSNull class]]) {
-        position = _assetsRecord.position.intValue;
-    }
-    UIScrollView* view = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
-    [view setBackgroundColor:[UIColor whiteColor]];
+    UIAlertView * alert= [[UIAlertView alloc] initWithTitle:@"资产接入!" message:@"\n\n\n\n\n\n\n\n\n\n\n" delegate:self cancelButtonTitle:@"取消" otherButtonTitles: @"确定", nil];
+    alert.tag = AlertViewTagIn;
     
-    UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setBackgroundColor:[UIColor grayColor]];
-    [button setFrame:CGRectMake(0, 0, 80, 20)];
-    [button setTitle:@"消失" forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(alertDismiss) forControlEvents:UIControlEventTouchUpInside];
-    [view addSubview:button];
-    
-    UILabel *label;
-    UITextField *outType;
-    label = [[UILabel alloc] initWithFrame:CGRectMake(5, 55, 45, 30)];
-    label.text = @"出库类型:";
-    [view addSubview:label];
-    TT_RELEASE_SAFELY(label);
-    outType = [[UITextField alloc] initWithFrame:CGRectMake(55, 5, 160, 30)];
-    [view addSubview:outType];
-    TT_RELEASE_SAFELY(outType);
-    switch (position) {
-        case 4:
-//            alert = [[CAlertView alloc] initWithTitle:@"资产出库" message:@"\n\n\n\n\n\n\n\n\n\n\n" delegate:self cancelButtonTitle:@"取消" otherButtonTitles: @"确定", nil];
-//            alert.tag = AlertViewTagOut;
-//            label = [[UILabel alloc] initWithFrame:CGRectMake(alert.frame.origin.x + 5, alert.frame.origin.y + 55, 45, 30)];
-//            label.text = @"出库类型:";
-//            [alert addSubview:label];
-//            TT_RELEASE_SAFELY(label);
-//            outType = [[UITextField alloc] initWithFrame:CGRectMake(alert.frame.origin.x + 55, alert.frame.origin.y + 5, alert.frame.size.width-60, 30)];
-//            [alert addSubview:outType];
-//            TT_RELEASE_SAFELY(outType);
-//            [alert show];
-            break;
-        default:
-//            alert = [[UIAlertView alloc] initWithTitle:@"资产拆除" message:@"拆除" delegate:self cancelButtonTitle:@"取消" otherButtonTitles: @"确定", nil];
-//            alert.tag = AlertViewTagOut;
-//            alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-//            UITextField *textField = [alert textFieldAtIndex:0];
-//            textField.size = CGSizeMake(20, 30);
-//            textField.keyboardType = UIKeyboardTypeDefault;
-//            [alert addSubview:textField];
-//            [alert show];
-            
-            
-            break;
-    }
-    alert = [[CAlertView alloc] initWithView:view];
-    alert.delegate = self;
-    [view release];
-    view = nil;
+    [alert addSubview: alertScrollView];
     [alert show];
     //释放
     [alert release];
 }
 
-//-(void)alertDismiss{
-//    [alert dismissAlertViewWithAnimated:YES];
-//    [alert release];
-//    alert  = nil;
-//}
+//资产拆除
+- (void)outOtherStore
+{
+    UIScrollView* scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
+    [scrollView setBackgroundColor:[UIColor whiteColor]];
+    
+    int y = 0;
+    UILabel *titleLabel;
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _P, scrollView.frame.size.width, 30)];
+    titleLabel.text = @"资产拆除";
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [scrollView addSubview:titleLabel];
+    y = y + 40 +2*_P;
+    
+    _storeMemo = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"拆除说明:" inputType:@"textarea" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _storeMemo.textField.delegate = self;
+    _storeMemo.frame = CGRectMake(_X, y, scrollView.frame.size.width, _storeMemo.viewHeight);
+    [scrollView addSubview:_storeMemo];
+    y = y + _storeMemo.height +2*_P;
+    
+    UIButton* submitbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [submitbutton setBackgroundColor:[UIColor grayColor]];
+    [submitbutton setFrame:CGRectMake(scrollView.width/2-90, y, 80, 30)];
+    [submitbutton setTitle:@"确定" forState:UIControlStateNormal];
+    [submitbutton addTarget:self action:@selector(submitOperation:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:submitbutton];
+    
+    UIButton* cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelbutton setBackgroundColor:[UIColor grayColor]];
+    [cancelbutton setFrame:CGRectMake(scrollView.width/2+10, y, 80, 30)];
+    [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelbutton addTarget:self action:@selector(updateAlertViewDismiss:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:cancelbutton];
+    
+    UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
+    [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
+    [scrollView addSubview:_back];
+    _back.frame = CGRectMake(0, 0, scrollView.frame.size.width, y);
+    [_back release];
+    [scrollView sendSubviewToBack:_back];
+    
+    updateAlertView = [[CAlertView alloc] initWithView:scrollView];
+    updateAlertView.delegate = self;
+    updateAlertView.tag = AlertViewTagOut;
+    [scrollView release];
+    [updateAlertView show];
+}
+
+//出库
+- (void)outStore
+{
+    UIScrollView* scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)];
+    [scrollView setBackgroundColor:[UIColor whiteColor]];
+    
+    int y = 0;
+    UILabel *titleLabel;
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _P, scrollView.frame.size.width, 30)];
+    titleLabel.text = @"资产出库";
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [scrollView addSubview:titleLabel];
+    y = y + 40 +2*_P;
+    
+    _outStoreType = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"出库类型:" inputType:@"select" inputText:@"项目" inputValue:@"项目" valueTypeDicCode:nil];
+    _outStoreType.textField.delegate = self;
+    _outStoreType.textField.tag = outStoreFieldTag;
+    [scrollView addSubview:_outStoreType];
+    y = y + _outStoreType.height +2*_P;
+    
+    _outStoreCode = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"项目编号:" inputType:@"input" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _outStoreCode.textField.delegate = self;
+    [scrollView addSubview:_outStoreCode];
+    y = y + _outStoreCode.height +2*_P;
+    
+    _storePerson = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"领用人:" inputType:@"select" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _storePerson.textField.delegate = self;
+    _storePerson.textField.tag = UserFieldTag;
+    [scrollView addSubview:_storePerson];
+    y = y + _storePerson.height +2*_P;
+    
+    _storeMemo = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"出库说明:" inputType:@"textarea" inputText:nil inputValue:nil valueTypeDicCode:nil];
+    _storeMemo.textField.delegate = self;
+    _storeMemo.frame = CGRectMake(_X, y, scrollView.frame.size.width, _storeMemo.viewHeight);
+    [scrollView addSubview:_storeMemo];
+    y = y + _storeMemo.height +2*_P;
+    
+    UIButton* submitbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [submitbutton setBackgroundColor:[UIColor grayColor]];
+    [submitbutton setFrame:CGRectMake(scrollView.width/2-90, y, 80, 30)];
+    [submitbutton setTitle:@"确定" forState:UIControlStateNormal];
+    [submitbutton addTarget:self action:@selector(submitOperation:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:submitbutton];
+    
+    UIButton* cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelbutton setBackgroundColor:[UIColor grayColor]];
+    [cancelbutton setFrame:CGRectMake(scrollView.width/2+10, y, 80, 30)];
+    [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelbutton addTarget:self action:@selector(updateAlertViewDismiss:) forControlEvents:UIControlEventTouchUpInside];
+    [scrollView addSubview:cancelbutton];
+    
+    UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
+    [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
+    [scrollView addSubview:_back];
+    _back.frame = CGRectMake(0, 0, scrollView.frame.size.width, y);
+    [_back release];
+    [scrollView sendSubviewToBack:_back];
+    
+    updateAlertView = [[CAlertView alloc] initWithView:scrollView];
+    updateAlertView.delegate = self;
+    updateAlertView.tag = AlertViewTagOutHouse;
+    [scrollView release];
+    [updateAlertView show];
+    //释放
+//    [updateAlertView release];
+}
+
+//提交操作
+-(void)submitOperation:(id)render{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSString *server_base;
+    NSString *assetsRecordStr;
+    NSString* postBodyString;
+    UIAlertView * alert;
+    switch (updateAlertView.tag) {
+        case AlertViewTagIn:        //接入
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsReplace.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            break;
+        case AlertViewTagReturnHouse:   //归还
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsRecordReturnHouse.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            break;
+        case AlertViewTagChange:    //替换
+            if (!_assetsIdNew) {
+                alert = [[UIAlertView alloc] initWithTitle:@"没有资产可以替换!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                //将这个UIAlerView 显示出来
+                [alert show];
+                //释放
+                [alert release];
+                return;
+            }
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsReplace.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            break;
+        case AlertViewTagOut:       //拆除
+            if (!_storeMemo.textField.text) {
+                alert = [[UIAlertView alloc] initWithTitle:@"请先填写拆除说明!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                //将这个UIAlerView 显示出来
+                [alert show];
+                //释放
+                [alert release];
+                return;
+            }
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsRemove.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            if (![_storeMemo.textField.text isKindOfClass:[NSNull class]]) {
+                assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",remark:'%@'",_storeMemo.textField.text];
+            }
+            break;
+        case AlertViewTagOutHouse:       //出库
+            if (!_storeMemo.textField.text) {
+                alert = [[UIAlertView alloc] initWithTitle:@"请先填写出库说明!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                //将这个UIAlerView 显示出来
+                [alert show];
+                //释放
+                [alert release];
+                return;
+            }
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsOutHouse.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            if (![_outStoreType.textField.text isKindOfClass:[NSNull class]]) {
+                assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",changeType:'%@'",_outStoreType.textField.text];
+            }
+            if (![_outStoreCode.textField.text isKindOfClass:[NSNull class]]) {
+                assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",projCode:'%@'",_outStoreCode.textField.text];
+            }
+            if (![_storePerson.textField.text isKindOfClass:[NSNull class]]) {
+                assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",applicants:'%@'",_storePerson.textValue];
+            }
+            if (![_storeMemo.textField.text isKindOfClass:[NSNull class]]) {
+                assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",remark:'%@'",_storeMemo.textField.text];
+            }
+            break;
+        case AlertViewTagDrop:  //报废
+            if (!_storeMemo.textField.text) {
+                alert = [[UIAlertView alloc] initWithTitle:@"请先填写报废说明!" message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                //将这个UIAlerView 显示出来
+                [alert show];
+                //释放
+                [alert release];
+                return;
+            }
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsScrap.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            if (![_storeMemo.textField.text isKindOfClass:[NSNull class]]) {
+                assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",remark:'%@'",_storeMemo.textField.text];
+            }
+            break;
+        default:
+            break;
+    }
+    NSLog(@"提交的数据---%@",postBodyString);
+    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+    [request setHttpMethod:@"POST"];
+    
+    request.contentType=@"application/x-www-form-urlencoded";
+    postBodyString = [postBodyString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    request.cachePolicy = TTURLRequestCachePolicyNoCache;
+    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+    
+    [request setHttpBody:postData];
+    request.userInfo = @"saveOperation";
+    
+    [request send];
+    
+    request.response = [[[TTURLDataResponse alloc] init] autorelease];
+}
+
+-(void)updateAlertViewDismiss:(id)render{
+    [updateAlertView dismissAlertViewWithAnimated:YES];
+    [updateAlertView release];
+}
 
 -(void)didRotationToInterfaceOrientation:(BOOL)Landscape view:(UIView*)view alertView:(CAlertView*)aletView{
     if (Landscape) {
-        [view setFrame:CGRectMake(0, 0, 300, 200)];
-        [aletView.backGroundView setBackgroundColor:[UIColor whiteColor]];
+        [view setFrame:CGRectMake(0, 0, 400, 300)];
+        //[aletView.backGroundView setBackgroundColor:[UIColor whiteColor]];
     }else{
-        [view setFrame:CGRectMake(0, 0, 200, 200)];
-        [aletView.backGroundView setBackgroundColor:[UIColor greenColor]];
+        [view setFrame:CGRectMake(0, 0, 300, 400)];
+        //[aletView.backGroundView setBackgroundColor:[UIColor greenColor]];
     }
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == [alertView cancelButtonIndex]) {
         NSLog(@"cancel%i", buttonIndex);
+        if (alertView.tag == OPERATIONTAG) {
+            [self updateAlertViewDismiss:alertView];
+        }
     }
     else {
         NSLog(@"---%i", alertView.tag);
@@ -671,6 +1000,7 @@ static int _P = 10;
     return YES;
 }
 
+//开始编辑Text表格时的响应
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     _autoAdaptedView = (AutoAdaptedView*)textField.superview;
@@ -729,6 +1059,9 @@ static int _P = 10;
     else if (textField.tag == ModelFieldTag){
         alertListContent = [self getSelectModelList];
     }
+    else if (textField.tag == outStoreFieldTag){
+        alertListContent = [self getSelectOutStoreList];
+    }
     else{
         alertListContent = [self getSelectList:_autoAdaptedView.valueTypeDicCode];
     }
@@ -737,6 +1070,14 @@ static int _P = 10;
     [dataAlertView show];
 }
 
+//出库自定义数据字典
+- (NSMutableArray*)getSelectOutStoreList
+{
+    NSMutableArray* resultList = [[NSMutableArray alloc] initWithObjects:@"项目",@"借出",@"修理", nil];
+    return resultList;
+}
+
+//厂家数据字典
 - (NSMutableArray*)getSelectFactoryList
 {
     AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
@@ -776,6 +1117,7 @@ static int _P = 10;
     return resultList;
 }
 
+//型号数据字典
 - (NSMutableArray*)getSelectModelList
 {
     AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
@@ -814,6 +1156,7 @@ static int _P = 10;
     return resultList;
 }
 
+//用户数据字典
 - (NSMutableArray*)getSelectUserList
 {
     AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
@@ -821,6 +1164,7 @@ static int _P = 10;
     return resultList;
 }
 
+//资产大类数据字典
 - (NSMutableArray*)getSelectAssetsTypeTopList
 {
     AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
@@ -828,6 +1172,7 @@ static int _P = 10;
     return resultList;
 }
 
+//基础数据字典
 - (NSMutableArray*)getSelectList:(NSString*)typeId
 {
     NSInteger tid = 0;
@@ -873,6 +1218,12 @@ static int _P = 10;
     [_fujia.textField resignFirstResponder];
     [_resp.textField resignFirstResponder];
     [_remark.textField resignFirstResponder];
+    
+    [_outStoreCode resignFirstResponder];
+    [_storeMemo resignFirstResponder];
+    [_storePerson resignFirstResponder];
+    [_outStoreType resignFirstResponder];
+    
     for (int j=_fujiaIndex; j>100; j--) {
         AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:j];
         [aav.textField resignFirstResponder];
@@ -921,6 +1272,9 @@ static int _P = 10;
         att = [alertListContent objectAtIndex:indexPath.row];
         cell.textLabel.text = att.model;
     }
+    else if(_autoAdaptedView.textField.tag == outStoreFieldTag){
+        cell.textLabel.text = [alertListContent objectAtIndex:indexPath.row];
+    }
     else{
         SysTypeValue *stv;
         stv = [alertListContent objectAtIndex:indexPath.row];
@@ -949,6 +1303,8 @@ static int _P = 10;
         _assetsRecord = [[AssetsRecord alloc] init];
         _assetsRecord.typeCode = att.assetsTypeCode;
         _assetsRecord.typeName = att.assetsTypeName;
+        _assetsRecord.assetsTypeCode = att.assetsTypeCode;
+        _assetsRecord.assetsTypeName = att.assetsTypeName;
         _assetsRecord.name = _zichanName.textField.text;
     }
     else if (_autoAdaptedView.textField.tag == FactoryFieldTag){
@@ -962,6 +1318,10 @@ static int _P = 10;
         at = [alertListContent objectAtIndex:indexPath.row];
         _autoAdaptedView.textField.text = at.model;
         _autoAdaptedView.textValue = at.model;
+    }
+    else if (_autoAdaptedView.textField.tag == outStoreFieldTag){
+        _autoAdaptedView.textField.text = [alertListContent objectAtIndex:indexPath.row];
+        _autoAdaptedView.textValue = [alertListContent objectAtIndex:indexPath.row];
     }
     else{
         SysTypeValue *stv;

@@ -34,6 +34,7 @@
 @property (nonatomic, retain) NSString *factory;
 @property (nonatomic, retain) NSString *model;
 @property (nonatomic, retain) NSString *assetsTypeCode;
+@property (nonatomic, retain) NSString *assetsTypeName;
 @property (nonatomic, retain) NSString *noteTimeStr;
 @property (nonatomic, retain) NSString *noteUser;
 @property (nonatomic, retain) NSString *positionName;
