@@ -45,7 +45,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     //全局变量远端服务器URL地址
-    SERVER_HOST = @"http://192.168.0.49:8088/runes_dw";
+    SERVER_HOST = @"http://192.168.1.49:8088/runes_dw";
     
     //网络检测,
     [[NSNotificationCenter defaultCenter] addObserver:self

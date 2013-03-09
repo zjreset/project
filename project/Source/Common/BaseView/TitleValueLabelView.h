@@ -15,4 +15,6 @@
 }
 
 - (id)initWithFrame:(CGRect)frame labelTitle:(NSString*)_title labelValue:(NSString*)_inputValue;
+
+- (void)setLabelValue:(NSString*)labelValue;
 @end

@@ -42,4 +42,5 @@
 @property (nonatomic, retain) NSMutableArray *assetsPropList;
 
 -(NSMutableArray*) initAssetsRecord:(NSDictionary *)jsonDic;
+-(AssetsRecord*) initAssetsRecordSingle:(NSDictionary *)jsonDic;
 @end

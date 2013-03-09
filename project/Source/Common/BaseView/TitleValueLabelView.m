@@ -25,11 +25,15 @@ static int titleLabelWidth = 90;
         
         _valueLabel = [[UILabel alloc] initWithFrame:CGRectMake(10 + titleLabelWidth, 0, titleLabelWidth, viewHeight)];
         _valueLabel.text = _labelValue;
-        _valueLabel.textAlignment = NSTextAlignmentRight;
+        _valueLabel.textAlignment = NSTextAlignmentLeft;
         _valueLabel.font = [UIFont systemFontOfSize:14];
         [self addSubview:_valueLabel];
     }
     return self;
 }
 
+- (void)setLabelValue:(NSString *)labelValue
+{
+    _valueLabel.text = labelValue;
+}
 @end

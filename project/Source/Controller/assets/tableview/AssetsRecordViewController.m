@@ -22,6 +22,8 @@
 static int LOGINTAG = -1;           //需要退回到登陆状态的TAG标志
 static int OPERATIONTAG = -2;       //资产操作TAG标志
 static int INPUTHEIGHT = 30;
+static int ASSETSCODENEWTAG = 200;  //资产编号标签,供查询使用;
+static int ASSETSBARNEWTAG = 201;   //资产条码标签,供查询使用;
 static int _X = 10;
 static int _P = 10;
 @implementation AssetsRecordViewController
@@ -477,14 +479,21 @@ static int _P = 10;
         return;
     }
     bool success = [[jsonDic objectForKey:@"success"] boolValue];
+    static NSStringCompareOptions comparisonOptions = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
     if (!success) {
+        if (request.userInfo != nil && [request.userInfo compare:@"searchAssetsByCode" options:comparisonOptions] == NSOrderedSame) {
+            [_zichanNameLabel setLabelValue:@""];
+            [_zichanTypeCodeLabel setLabelValue:@""];
+            [_zichanFactoryLabel setLabelValue:@""];
+            [_zichanModelLabel setLabelValue:@""];
+            _assetsIdNew = 0;
+        }
         //创建对话框 提示用户获取请求数据失败
         UIAlertView * alert= [[UIAlertView alloc] initWithTitle:[jsonDic objectForKey:@"msg"] message:nil delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
         [alert show];
         [alert release];
     }
     else{
-        static NSStringCompareOptions comparisonOptions = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
         if (request.userInfo != nil && [request.userInfo compare:@"AssetsProp" options:comparisonOptions] == NSOrderedSame) {
             AssetsProp *assetsProp = [[AssetsProp alloc] init];
             _assetsRecord.assetsPropList = [assetsProp initAssetsPropWithJsonDict:[jsonDic objectForKey:@"assetsPropList"]];
@@ -501,6 +510,23 @@ static int _P = 10;
             alert.tag = OPERATIONTAG;
             [alert show];
             [alert release];
+        }
+        else if (request.userInfo != nil && [request.userInfo compare:@"searchAssetsByCode" options:comparisonOptions] == NSOrderedSame) {
+            AssetsRecord *assetsRecord = [[AssetsRecord alloc] initAssetsRecordSingle:[jsonDic objectForKey:@"assetsRecord"]];
+            if (assetsRecord != nil) {
+                [_zichanNameLabel setLabelValue:assetsRecord.name];
+                [_zichanTypeCodeLabel setLabelValue:assetsRecord.assetsTypeName];
+                [_zichanFactoryLabel setLabelValue:assetsRecord.factory];
+                [_zichanModelLabel setLabelValue:assetsRecord.model];
+                _assetsIdNew = assetsRecord.assetsId;
+            }
+            else {
+                [_zichanNameLabel setLabelValue:@""];
+                [_zichanTypeCodeLabel setLabelValue:@""];
+                [_zichanFactoryLabel setLabelValue:@""];
+                [_zichanModelLabel setLabelValue:@""];
+                _assetsIdNew = 0;
+            }
         }
     }
 }
@@ -591,14 +617,16 @@ static int _P = 10;
     titleLabel.textAlignment = NSTextAlignmentCenter;
     [scrollView addSubview:titleLabel];
     y = y + 40 +2*_P;
-    
+    _assetsIdNew = 0;
 	_assetsCodeNew = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"资产编码:" inputType:@"input" inputText:nil inputValue:nil valueTypeDicCode:nil];
     _assetsCodeNew.textField.delegate = self;
+    _assetsCodeNew.tag = ASSETSCODENEWTAG;
     [scrollView addSubview:_assetsCodeNew];
     y = y + _assetsCodeNew.height + 2*_P;
     
 	_barcodeNew = [[AutoAdaptedView alloc] initWithFrame:CGRectMake(_X, y, scrollView.frame.size.width, INPUTHEIGHT) title:@"资产条码:" inputType:@"input" inputText:nil inputValue:nil valueTypeDicCode:nil];
     _barcodeNew.textField.delegate = self;
+    _barcodeNew.tag = ASSETSBARNEWTAG;
     [scrollView addSubview:_barcodeNew];
     y = y + _barcodeNew.height + 2*_P;
     
@@ -841,8 +869,20 @@ static int _P = 10;
                 return;
             }
             server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsReplace.action", delegate.SERVER_HOST];
-            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
-            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assertReplaceOldJson={assetsId:'%i'}&assertReplaceNewJson={assetsId:'%i'",_assetsRecord.assetsId,_assetsIdNew];
+            if (_assetsCodeNew.textField.text.length > 0) {
+                postBodyString = [postBodyString stringByAppendingFormat:@",assetsCode='%@'",_assetsCodeNew.textField.text ];
+            }
+            else {
+                postBodyString = [postBodyString stringByAppendingFormat:@",assetsCode=''"];
+            }
+            if (_barcodeNew.textField.text.length > 0) {
+                postBodyString = [postBodyString stringByAppendingFormat:@",barcode='%@'",_barcodeNew.textField.text ];
+            }
+            else {
+                postBodyString = [postBodyString stringByAppendingFormat:@",barcode=''"];
+            }
+            postBodyString = [postBodyString stringByAppendingFormat:@"}"];
             break;
         case AlertViewTagOut:       //拆除
             if (!_storeMemo.textField.text) {
@@ -1043,6 +1083,46 @@ static int _P = 10;
     }
 }
 
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    _autoAdaptedView = (AutoAdaptedView*)textField.superview;
+    if (_autoAdaptedView.tag == ASSETSBARNEWTAG || _autoAdaptedView.tag == ASSETSCODENEWTAG){
+        if (_assetsCodeNew.textField.text.length > 0 || _barcodeNew.textField.text.length > 0) {
+            AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+            NSString *server_base;
+            NSString* postBodyString;
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!getAssetsRecordByCode.action", delegate.SERVER_HOST];
+            postBodyString = @"isMobile=true";
+            if (_assetsCodeNew.textField.text.length > 0) {
+                postBodyString = [postBodyString stringByAppendingFormat:@"&assetsCode=%@",_assetsCodeNew.textField.text ];
+            }
+            else {
+                postBodyString = [postBodyString stringByAppendingFormat:@"&assetsCode="];
+            }
+            if (_barcodeNew.textField.text.length > 0) {
+                postBodyString = [postBodyString stringByAppendingFormat:@"&barcode=%@",_barcodeNew.textField.text ];
+            }
+            else {
+                postBodyString = [postBodyString stringByAppendingFormat:@"&barcode="];
+            }
+            NSLog(@"提交的数据---%@",postBodyString);
+            TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
+            [request setHttpMethod:@"POST"];
+            request.contentType=@"application/x-www-form-urlencoded";
+            postBodyString = [postBodyString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            request.cachePolicy = TTURLRequestCachePolicyNoCache;
+            NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
+            
+            [request setHttpBody:postData];
+            request.userInfo = @"searchAssetsByCode";
+            
+            [request send];
+            
+            request.response = [[[TTURLDataResponse alloc] init] autorelease];
+        }
+    }
+}
+
 //下拉列表
 - (void)dropdown:(id)sender
 {
@@ -1219,16 +1299,18 @@ static int _P = 10;
     [_resp.textField resignFirstResponder];
     [_remark.textField resignFirstResponder];
     
-    [_outStoreCode resignFirstResponder];
-    [_storeMemo resignFirstResponder];
-    [_storePerson resignFirstResponder];
-    [_outStoreType resignFirstResponder];
-    
     for (int j=_fujiaIndex; j>100; j--) {
         AutoAdaptedView *aav = (AutoAdaptedView*)[self.view viewWithTag:j];
         [aav.textField resignFirstResponder];
     }
-
+    
+    [_outStoreCode.textField resignFirstResponder];
+    [_storeMemo.textField resignFirstResponder];
+    [_storePerson.textField resignFirstResponder];
+    [_outStoreType.textField resignFirstResponder];
+    
+    [_assetsCodeNew.textField resignFirstResponder];
+    [_barcodeNew.textField resignFirstResponder];
 }
 
 #pragma mark - Table view data source

@@ -218,6 +218,8 @@ static NSInteger DATATABLETAG = -5;
         _searchTypeCode = att.assetsTypeCode;
         NSUInteger cancelButtonIndex = _dataAlertView.cancelButtonIndex;
         [_dataAlertView dismissWithClickedButtonIndex: cancelButtonIndex animated: YES];
+        [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
+         [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
     }
     else {
         TTTableViewCell *cell = (TTTableViewCell *) [tableView cellForRowAtIndexPath:indexPath];
@@ -296,11 +298,20 @@ static NSInteger DATATABLETAG = -5;
  */
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
 {
-    [self filterContentForSearchText:searchString scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
-    
+    _searchTypeCode = nil;
     // Return YES to cause the search result table view to be reloaded.
     savedSearchTerm = searchString;
+    if([[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]] isEqualToString:@"资产类型"]){
+        AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+        _dataListContent = [[NSMutableArray alloc] initWithArray:delegate.assetsTypeTopList];
+        [_dataTableView reloadData];
+        [_dataAlertView addSubview: _dataTableView];
+        [_dataAlertView show];
+    }
+    else {
+        [self filterContentForSearchText:searchString scope:
+         [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
+    }
     return YES;
 }
 
@@ -309,15 +320,17 @@ static NSInteger DATATABLETAG = -5;
  */
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
 {
-    //_searchTypeCode = nil;
-    [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
+    _searchTypeCode = nil;
     if([[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption] isEqualToString:@"资产类型"]){
         AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
         _dataListContent = [[NSMutableArray alloc] initWithArray:delegate.assetsTypeTopList];
         [_dataTableView reloadData];
         [_dataAlertView addSubview: _dataTableView];
         [_dataAlertView show];
+    }
+    else {
+        [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
+         [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
     }
     // Return YES to cause the search result table view to be reloaded.
     return YES;

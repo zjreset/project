@@ -131,6 +131,118 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
     return assetsRecordList;
 }
 
+-(AssetsRecord*) initAssetsRecordSingle:(NSDictionary *)jsonDic
+{
+    if (jsonDic != nil) {
+        AssetsRecord * ar;
+        ar = [[[AssetsRecord alloc] init] autorelease];
+        if (![[jsonDic objectForKey:@"assetsId"] isEqual:[NSNull null]]){
+            ar.assetsId = [[jsonDic objectForKey:@"assetsId"] integerValue];
+        }
+        else{
+            ar.assetsId = 0;
+        }
+        if (![[jsonDic objectForKey:@"baseId"] isEqual:[NSNull null]]) {
+            ar.baseId = [[jsonDic objectForKey:@"baseId"] integerValue];
+        }
+        else{
+            ar.baseId = 0;
+        }
+        if (![[jsonDic objectForKey:@"baseCode"] isEqual:[NSNull null]]) {
+            ar.baseCode = [jsonDic objectForKey:@"baseCode"];
+        }
+        if (![[jsonDic objectForKey:@"typeCode"] isEqual:[NSNull null]]) {
+            ar.typeCode = [jsonDic objectForKey:@"typeCode"];
+        }
+        if (![[jsonDic objectForKey:@"barcode"] isEqual:[NSNull null]]) {
+            ar.barcode = [jsonDic objectForKey:@"barcode"];
+        }
+        if (![[jsonDic objectForKey:@"assetsCode"] isEqual:[NSNull null]]) {
+            ar.assetsCode = [jsonDic objectForKey:@"assetsCode"];
+        }
+        if (![[jsonDic objectForKey:@"name"] isEqual:[NSNull null]]) {
+            ar.name = [jsonDic objectForKey:@"name"];
+        }
+        else{
+            ar.name = @"没有名称";
+        }
+        ar.pinyin = [jsonDic objectForKey:@"pinyin"];
+        if (![[jsonDic objectForKey:@"position"] isEqual:[NSNull null]]) {
+            ar.position = [jsonDic objectForKey:@"position"];
+        }
+        if (![[jsonDic objectForKey:@"assetsOwners"] isEqual:[NSNull null]]) {
+            ar.assetsOwners = [jsonDic objectForKey:@"assetsOwners"];
+        }
+        if (![[jsonDic objectForKey:@"status"] isEqual:[NSNull null]]) {
+            ar.status = [jsonDic objectForKey:@"status"];
+        }
+        if (![[jsonDic objectForKey:@"useStatus"] isEqual:[NSNull null]]) {
+            ar.useStatus = [[jsonDic objectForKey:@"useStatus"] integerValue];
+        }
+        else{
+            ar.useStatus = 0;
+        }
+        if (![[jsonDic objectForKey:@"startTimeStr"] isEqual:[NSNull null]]) {
+            ar.startTimeStr = [jsonDic objectForKey:@"startTimeStr"];
+        }
+        else {
+            ar.startTimeStr = @"";
+        }
+        if (![[jsonDic objectForKey:@"valid"] isEqual:[NSNull null]]) {
+            ar.valid = [jsonDic objectForKey:@"valid"];
+        }
+        if (![[jsonDic objectForKey:@"isChange"] isEqual:[NSNull null]]){
+            ar.isChange = [[jsonDic objectForKey:@"isChange"] integerValue];
+        }
+        else{
+            ar.isChange = 0;
+        }
+        if (![[jsonDic objectForKey:@"changeType"] isEqual:[NSNull null]]) {
+            ar.changeType = [jsonDic objectForKey:@"changeType"];
+        }
+        if (![[jsonDic objectForKey:@"lng"] isEqual:[NSNull null]]) {
+            ar.lng = [jsonDic objectForKey:@"lng"];
+        }
+        if (![[jsonDic objectForKey:@"lat"] isEqual:[NSNull null]]) {
+            ar.lat = [jsonDic objectForKey:@"lat"];
+        }
+        if (![[jsonDic objectForKey:@"resp"] isEqual:[NSNull null]]) {
+            ar.resp = [jsonDic objectForKey:@"resp"];
+        }
+        if (![[jsonDic objectForKey:@"remark"] isEqual:[NSNull null]]) {
+            ar.remark = [jsonDic objectForKey:@"remark"];
+        }
+        if (![[jsonDic objectForKey:@"typeName"] isEqual:[NSNull null]]) {
+            ar.typeName = [jsonDic objectForKey:@"typeName"];
+        }
+        if (![[jsonDic objectForKey:@"factory"] isEqual:[NSNull null]]) {
+            ar.factory = [jsonDic objectForKey:@"factory"];
+        }
+        if (![[jsonDic objectForKey:@"model"] isEqual:[NSNull null]]) {
+            ar.model = [jsonDic objectForKey:@"model"];
+        }
+        if (![[jsonDic objectForKey:@"assetsTypeCode"] isEqual:[NSNull null]]) {
+            ar.assetsTypeCode = [jsonDic objectForKey:@"assetsTypeCode"];
+        }
+        if (![[jsonDic objectForKey:@"assetsTypeName"] isEqual:[NSNull null]]) {
+            ar.assetsTypeName = [jsonDic objectForKey:@"assetsTypeName"];
+        }
+        if (![[jsonDic objectForKey:@"positionName"] isEqual:[NSNull null]]) {
+            ar.positionName = [jsonDic objectForKey:@"positionName"];
+        }
+        if (![[jsonDic objectForKey:@"noteTimeStr"] isEqual:[NSNull null]]) {
+            ar.noteTimeStr = [jsonDic objectForKey:@"noteTimeStr"];
+        }
+        if (![[jsonDic objectForKey:@"noteUser"] isEqual:[NSNull null]]) {
+            ar.noteUser = [jsonDic objectForKey:@"noteUser"];
+        }
+        ar.photoPath = [self getAssetsTypeTopPhotoPath:ar];
+        ar.assetsPropList = [[AssetsProp alloc] initAssetsPropWithJsonStr:[jsonDic objectForKey:@"assetsPropStr"]];
+        return ar;
+    }
+    return nil;
+}
+
 - (NSString*)getAssetsTypeTopPhotoPath:(AssetsRecord*)ar
 {
     NSString *photoPath = @"bundle://Placeholder.png";
