@@ -429,10 +429,10 @@ static int _P = 10;
 
 - (NSString*)getTypeValueNameById:(NSString*)sId
 {
-    if (![sId isKindOfClass:[NSNull class]]) {
+    if (sId != nil && ![sId isKindOfClass:[NSNull class]]) {
         AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
         for(SysTypeValue *sysTypeValue in delegate.sysTypeValueList){
-            if (sysTypeValue != nil && [sysTypeValue.sId compare: sId] == NSOrderedSame) {
+            if (sysTypeValue != nil && sysTypeValue.sId != nil && [sysTypeValue.sId intValue] == [sId intValue]) {
                 return sysTypeValue.name;
             }
         }
