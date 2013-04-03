@@ -29,6 +29,7 @@
             att.remark = [dictionary objectForKey:@"remark"];
             att.count = [dictionary objectForKey:@"count"];
             att.icon = [NSString stringWithFormat:@"bundle://%@.png",[dictionary objectForKey:@"iconCls"]];
+            att.icon2x = [NSString stringWithFormat:@"bundle://%@@2x.png",[dictionary objectForKey:@"iconCls"]];
             att.URL = [NSString stringWithFormat:@"fb://item%@",att.assetsTypeCode];
             [assetsTypeTopList addObject:att];
         }

@@ -20,12 +20,21 @@
         //设置TabView的风格
         //self.tableViewStyle = UITableViewStyleGrouped;
         [TTStyleSheet setGlobalStyleSheet:[[[MyStyleSheet alloc] init] autorelease]];
+        //增加背景点击响应事件
+        UIControl *_back = [[UIControl alloc] initWithFrame:self.view.frame];
+        [(UIControl *)_back addTarget:self action:@selector(backgroundTap:) forControlEvents:UIControlEventTouchDown];
+        self.view = _back;
+        [_back release];
         
         //设置背景图片
-        //self.view.backgroundColor=[UIColor colorWithPatternImage:TTIMAGE(@"bundle://Default.png")];
+        self.view.backgroundColor=[UIColor colorWithPatternImage:TTIMAGE(@"bundle://login-back.jpg")];
         
         //用户名输入框
         userName = [[[UITextField alloc] init]autorelease];
+        
+        userName.frame = CGRectMake(125, 233, 120, 24);
+        
+        userName.background = TTIMAGE(@"bundle://login-input.png");
         
         //这里设置它的代理在本类中
         userName.delegate = self;
@@ -49,6 +58,10 @@
         //密码输入框
         passWord = [[[UITextField alloc] init]autorelease];
         
+        passWord.frame = CGRectMake(125, 265, 120, 24);
+        
+        passWord.background = TTIMAGE(@"bundle://login-input.png");
+        
         //这里设置它的代理在本类中
         passWord.delegate = self;
         
@@ -71,15 +84,18 @@
         passWord.secureTextEntry =YES;
         
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-        NSLog(@"用户名:%@,密码:%@",[defaults objectForKey:@"userName"],[defaults objectForKey:@"passWord"]);
+        //NSLog(@"用户名:%@,密码:%@",[defaults objectForKey:@"userName"],[defaults objectForKey:@"passWord"]);
         [userName setText:[defaults objectForKey:@"userName"]];
         [passWord setText:[defaults objectForKey:@"passWord"]];
         
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 100, 300, 40)];
-        label.text = @"记住密码:";
-        [self.view addSubview:label];
+        [self.view addSubview:userName];
+        [self.view addSubview:passWord];
         
-        mySwitch = [[ UISwitch alloc]initWithFrame:CGRectMake(230,105.0,0.0,0.0)];
+        //UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 100, 300, 40)];
+        //label.text = @"记住密码:";
+        //[self.view addSubview:label];
+        
+        mySwitch = [[ UISwitch alloc]initWithFrame:CGRectMake(180,217,0.0,0.0)];
         [mySwitch setOn:true];
         //将按钮加入视图中
         [self.view addSubview:mySwitch];
@@ -87,34 +103,13 @@
         
         //在这里创建一个按钮，点击按钮后开始登录
         keyDone = [UIButton buttonWithType:UIBarStyleBlack] ;
-        keyDone.frame = CGRectMake(10, 150, 300, 40);
-        [keyDone setTitle:@"登录" forState:UIControlStateNormal];
+        [keyDone setImage:TTIMAGE(@"bundle://login-btn.png") forState:UIControlStateNormal];
+        keyDone.frame = CGRectMake(75, 320, 166, 28);
+        //[keyDone setTitle:@"登录" forState:UIControlStateNormal];
         [keyDone addTarget:self action:@selector(ButtonPressed) forControlEvents:UIControlEventTouchUpInside];
         
         //将按钮加入视图中
         [self.view addSubview:keyDone];
-        
-        
-        keyTest = [UIButton buttonWithType:UIBarStyleBlack] ;
-        keyTest.frame = CGRectMake(10, 200, 300, 40);
-        [keyTest setTitle:@"测试" forState:UIControlStateNormal];
-        [keyTest addTarget:self action:@selector(TestPressed) forControlEvents:UIControlEventTouchUpInside];
-        
-        //将按钮加入视图中
-        [self.view addSubview:keyTest];
-        
-        //设置tableView的显示区域
-        self.tableView.frame = self.view.bounds;
-        
-        //TabView默认触摸时可以上下滑动
-        //这里禁止它上滑滑动
-        self.tableView.scrollEnabled = NO;
-        
-        //设置TableView背景颜色为透明状态
-        self.tableView.backgroundColor = [UIColor clearColor];
-        
-        //将用户名与密码输入框加入视图中
-        self.dataSource = [TTListDataSource dataSourceWithObjects:userName,passWord,nil];
     }
     
     return self;
@@ -158,8 +153,32 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    //当用户点击IOS软键盘右下角完成按钮 此时关闭软键盘
+
+#pragma mark -
+#pragma mark 解决虚拟键盘挡住UITextField的方法
+- (void)keyboardWillShow:(NSNotification *)noti
+{
+    //键盘输入的界面调整
+    //键盘的高度
+    float height = 216.0;
+    CGRect frame = self.view.frame;
+    frame.size = CGSizeMake(frame.size.width, frame.size.height - height);
+    [UIView beginAnimations:@"Curl"context:nil];//动画开始
+    [UIView setAnimationDuration:0.30];
+    [UIView setAnimationDelegate:self];
+    [self.view setFrame:frame];
+    [UIView commitAnimations];
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    // When the user presses return, take focus away from the text field so that the keyboard is dismissed.
+    NSTimeInterval animationDuration = 0.30f;
+    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+    [UIView setAnimationDuration:animationDuration];
+    CGRect rect = CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height);
+    self.view.frame = rect;
+    [UIView commitAnimations];
     [textField resignFirstResponder];
     return YES;
 }
@@ -233,26 +252,6 @@
     
     //删除文字视图
     [textView removeFromSuperview];
-}
-
-- (void)TestPressed
-{
-    //地址的方法
-    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
-    NSString *server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!getAssetsRecordByAssetsId.action", delegate.SERVER_HOST];
-    TTURLRequest* request = [TTURLRequest requestWithURL: server_base delegate: self];
-    [request setHttpMethod:@"POST"];
-    
-    request.contentType=@"application/x-www-form-urlencoded";
-    NSString* postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsId=487&assetsTypeCode=1004"];
-    request.cachePolicy = TTURLRequestCachePolicyNoCache;
-    NSData* postData = [NSData dataWithBytes:[postBodyString UTF8String] length:[postBodyString length]];
-    
-    [request setHttpBody:postData];
-    
-    [request send];
-    
-    request.response = [[[TTURLDataResponse alloc] init] autorelease];
 }
 
 //点击登录按钮时
@@ -390,5 +389,18 @@
     [navigator openURLAction:[[TTURLAction actionWithURLPath:@"tt://main"] applyAnimated:YES]];
 }
 
-
+#pragma mark 触摸背景来关闭虚拟键盘
+-(IBAction)backgroundTap:(id)sender
+{
+    // When the user presses return, take focus away from the text field so that the keyboard is dismissed.
+    NSTimeInterval animationDuration = 0.30f;
+    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
+    [UIView setAnimationDuration:animationDuration];
+    CGRect rect = CGRectMake(0.0f, 0.0f, self.view.frame.size.width, self.view.frame.size.height);
+    self.view.frame = rect;
+    [UIView commitAnimations];
+    
+    [userName resignFirstResponder];
+    [passWord resignFirstResponder];
+}
 @end

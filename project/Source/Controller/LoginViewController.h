@@ -11,7 +11,7 @@
 #import "SBJson.h"
 #import "AppDelegate.h"
 
-@interface LoginViewController : TTTableViewController<UITextFieldDelegate>
+@interface LoginViewController : TTViewController<UITextFieldDelegate>
 {
     //输入用户名
     UITextField* userName;
@@ -21,8 +21,6 @@
     UISwitch* mySwitch;
     //登录按钮
     UIButton* keyDone;
-    //测试按钮
-    UIButton* keyTest;
     //登录时动画
     UIActivityIndicatorView *activity;
     //登录半透明背景

@@ -14,7 +14,7 @@
 @implementation AssetsRecord
 @synthesize assetsId,assetsCode,assetsOwners,assetsTypeCode,baseId,barcode,baseCode,changeType,assetsPropList,
     factory,isChange,model,lat,lng,name,noteTimeStr,noteUser,pinyin,position,positionName,
-remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
+remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid,assetsTypeName,photoPath;
 
 -(NSMutableArray*) initAssetsRecord:(NSDictionary *)jsonDic
 {
@@ -245,19 +245,19 @@ remark,resp,status,startTimeStr,typeCode,typeName,useStatus,valid;
 
 - (NSString*)getAssetsTypeTopPhotoPath:(AssetsRecord*)ar
 {
-    NSString *photoPath = @"bundle://Placeholder.png";
+    NSString *photoPaths = @"bundle://Placeholder.png";
     if (![ar.assetsTypeCode isEqual:[NSNull null]]) {
         AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
         for (AssetsTypeTop *assetsTypeTop in delegate.assetsTypeTopList)
         {
             if ([assetsTypeTop.assetsTypeCode compare:ar.assetsTypeCode] == NSOrderedSame) {
-                photoPath = assetsTypeTop.icon;
-                return photoPath;
+                photoPaths = assetsTypeTop.icon;
+                return photoPaths;
             }
         }
         
     }
-    return photoPath;
+    return photoPaths;
 }
 
 @end
