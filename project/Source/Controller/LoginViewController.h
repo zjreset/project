@@ -21,6 +21,8 @@
     UISwitch* mySwitch;
     //登录按钮
     UIButton* keyDone;
+    //记住密码按钮
+    UIButton* rememberDone;
     //登录时动画
     UIActivityIndicatorView *activity;
     //登录半透明背景

@@ -941,7 +941,10 @@ static int _P = 10;
                 assetsRecordStr = [assetsRecordStr stringByAppendingFormat:@",remark:'%@'",_storeMemo.textField.text];
             }
             break;
-        default:
+        default:        //接入
+            server_base = [NSString stringWithFormat:@"%@/assets/assetsrecord!assetsReplace.action", delegate.SERVER_HOST];
+            assetsRecordStr = [[NSString alloc] initWithString:@"assetsRecordOperation:1"];
+            postBodyString = [NSString stringWithFormat:@"isMobile=true&assetsIdStr=%i&assertRecordJson={%@}",_assetsRecord.assetsId,assetsRecordStr];
             break;
     }
     NSLog(@"提交的数据---%@",postBodyString);

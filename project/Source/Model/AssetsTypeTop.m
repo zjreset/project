@@ -9,7 +9,7 @@
 #import "AssetsTypeTop.h"
 
 @implementation AssetsTypeTop
-@synthesize assetsTypeTopId,assetsTypeCode,assetsTypeName,remark,count,URL,icon;
+@synthesize assetsTypeTopId,assetsTypeCode,assetsTypeName,remark,count,URL,icon,icon170,icon95;
 
 -(NSMutableArray*) initAssetsTypeTop:(NSDictionary *)jsonDic
 {
@@ -29,7 +29,8 @@
             att.remark = [dictionary objectForKey:@"remark"];
             att.count = [dictionary objectForKey:@"count"];
             att.icon = [NSString stringWithFormat:@"bundle://%@.png",[dictionary objectForKey:@"iconCls"]];
-            att.icon2x = [NSString stringWithFormat:@"bundle://%@@2x.png",[dictionary objectForKey:@"iconCls"]];
+            att.icon95 = [NSString stringWithFormat:@"bundle://%@-95.png",[dictionary objectForKey:@"iconCls"]];
+            att.icon170 = [NSString stringWithFormat:@"bundle://%@-170.png",[dictionary objectForKey:@"iconCls"]];
             att.URL = [NSString stringWithFormat:@"fb://item%@",att.assetsTypeCode];
             [assetsTypeTopList addObject:att];
         }

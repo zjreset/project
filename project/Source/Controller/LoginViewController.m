@@ -98,8 +98,11 @@
         mySwitch = [[ UISwitch alloc]initWithFrame:CGRectMake(180,217,0.0,0.0)];
         [mySwitch setOn:true];
         //将按钮加入视图中
-        [self.view addSubview:mySwitch];
-        
+        //[self.view addSubview:mySwitch];
+        rememberDone = [[UIButton alloc] initWithFrame:CGRectMake(150, 290, 94, 20)];
+        [rememberDone setImage:TTIMAGE(@"bundle://login-remenber-checked.png") forState:UIControlStateNormal];
+        [rememberDone addTarget:self action:@selector(changeRemember) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:rememberDone];
         
         //在这里创建一个按钮，点击按钮后开始登录
         keyDone = [UIButton buttonWithType:UIBarStyleBlack] ;
@@ -110,10 +113,23 @@
         
         //将按钮加入视图中
         [self.view addSubview:keyDone];
+        NSLog(@"%f",self.view.frame.size.height);
     }
     
     return self;
     
+}
+
+-(void)changeRemember
+{
+    if (mySwitch.on) {
+        [mySwitch setOn:false];
+        [rememberDone setImage:TTIMAGE(@"bundle://login-remenber.png") forState:UIControlStateNormal];
+    }
+    else{
+        [rememberDone setImage:TTIMAGE(@"bundle://login-remenber-checked.png") forState:UIControlStateNormal];
+        [mySwitch setOn:true];
+    }
 }
 
 //页面每次进入时都会调用这里的方法，
@@ -156,7 +172,8 @@
 
 #pragma mark -
 #pragma mark 解决虚拟键盘挡住UITextField的方法
-- (void)keyboardWillShow:(NSNotification *)noti
+
+- (void)keyboardWillAppear:(BOOL)animated withBounds:(CGRect)bounds
 {
     //键盘输入的界面调整
     //键盘的高度

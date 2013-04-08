@@ -18,7 +18,9 @@
         SysTypeValue *ap;
         for (NSDictionary* dictionary in jsonDic) {
             ap = [[[SysTypeValue alloc] init] autorelease];
-            ap.sId = [dictionary objectForKey:@"id"];
+            if(![[dictionary objectForKey:@"id"] isEqual:[NSNull null]]){
+                ap.sId = [NSString stringWithFormat:@"%i", [[dictionary objectForKey:@"id"] integerValue]];
+            }
             if(![[dictionary objectForKey:@"typeId"] isEqual:[NSNull null]]){
                 ap.typeId = [[dictionary objectForKey:@"typeId"] integerValue];
             }

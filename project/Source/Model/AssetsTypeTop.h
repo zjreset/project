@@ -15,7 +15,8 @@
 @property (nonatomic, retain) NSString *assetsTypeName;
 @property (nonatomic, retain) NSString *remark;
 @property (nonatomic, retain) NSString *icon;
-@property (nonatomic, retain) NSString *icon2x;
+@property (nonatomic, retain) NSString *icon95;
+@property (nonatomic, retain) NSString *icon170;
 @property (nonatomic, retain) NSString *count;
 @property (nonatomic, retain) NSString *URL;
 -(NSMutableArray*) initAssetsTypeTop:(NSDictionary *)jsonDic;
